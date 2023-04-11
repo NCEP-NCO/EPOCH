@@ -1,0 +1,32 @@
+commentdef {
+  p_header = "ThreshHist";
+}
+
+commentdef {
+  p_header = "Reads in thresholds SPDB back some number of days and takes averages, tile based";
+}
+
+paramdef int
+{
+  p_help = "Maximum days back to look for thresholds SPDB data";
+  p_default = 30;
+} thresholds_max_days_back;
+
+paramdef string
+{
+  p_help = "SPDB in which to write tile based thresholds";
+  p_default = "spdbp:://localhost::x";
+} thresholds_spdb_out;
+
+paramdef string
+{
+  p_help = "SPDB from which to read tile based thresholds";
+  p_default = "spdbp:://localhost::x";
+} thresholds_spdb_in;
+
+paramdef double
+{
+  p_help = "Thresholded field data default coldstart threshold";
+  p_default = 2.0;
+} coldstart_threshold;
+

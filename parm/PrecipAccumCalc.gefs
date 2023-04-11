@@ -1,0 +1,429 @@
+/**********************************************************************
+ * TDRP params for ParamsMainNone
+ **********************************************************************/
+
+//======================================================================
+//
+// Main Params.
+//
+//======================================================================
+ 
+///////////// debug_file //////////////////////////////
+//
+// debug file.
+//
+// File with debug settings.
+//
+//
+// Type: string
+//
+
+debug_file = "debug.params";
+
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+//
+// Used for registration with procmap.
+//
+//
+// Type: string
+//
+
+instance = "gefs";
+
+///////////// procmap_interval_minutes ////////////////
+//
+// Pmu max minutes before restart.
+//
+// Used for registration with procmap.
+//
+//
+// Type: double
+//
+
+procmap_interval_minutes = 1;
+
+//======================================================================
+//
+// End of Main Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for ParamsFcstInOut
+ **********************************************************************/
+
+//======================================================================
+//
+// Fcst Params.
+//
+// --------data values for input and output--------------------
+// --------projection file specification ----------------------.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// description of params.
+//
+// Inputs/outputs share the same parameters:
+// name = simple name for this data
+// description = description of how its used in the app
+// url = where data comes from or is written
+// field = field name
+// units = data units
+// remap = TRUE if grid should be remapped to the ConvWx projection for 
+//   read
+// delta_minutes = minutes between obs data
+// lt_hour0 = hour of 0th lead time
+// lt_hour1 = hour of last lead time
+// lt_delta_hours = hours between lead times.
+//
+//======================================================================
+ 
+///////////// fcst_input //////////////////////////////
+//
+// input fcst data.
+//
+// forecast data input.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string name;
+//      string description;
+//      string url;
+//      string field;
+//      string units;
+//      double lt_hour0;
+//      double lt_hour1;
+//      double lt_delta_hours;
+//      boolean remap;
+//      int gt_delta_minutes;
+//   }
+//
+// 1D array - variable length.
+//
+
+fcst_input = {
+  {
+    name = "inputModel",
+    description = "Forecast input",
+    url = "mdvp:://localhost::EpochOps/mdv/model/gefs",
+    field = "APCP3Hr",
+    units = "mm/hr",
+    lt_hour0 = 3,
+    lt_hour1 = 57,
+    lt_delta_hours = 3,
+    remap = TRUE,
+    gt_delta_minutes = 360
+  }
+};
+
+///////////// fcst_output /////////////////////////////
+//
+// output fcst data.
+//
+// forecast data output.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string name;
+//      string description;
+//      string url;
+//      string field;
+//      string units;
+//      double lt_hour0;
+//      double lt_hour1;
+//      double lt_delta_hours;
+//      boolean remap;
+//      int gt_delta_minutes;
+//   }
+//
+// 1D array - variable length.
+//
+
+fcst_output = {
+  {
+    name = "outputModel",
+    description = "Forecast output",
+    url = "mdvp:://localhost::EpochOps/mdv/model/gefs3hr",
+    field = "APCP3Hr",
+    units = "mm/hr",
+    lt_hour0 = 3,
+    lt_hour1 = 57,
+    lt_delta_hours = 3,
+    remap = TRUE,
+    gt_delta_minutes = 360
+  }
+};
+
+///////////// projection_param_file ///////////////////
+//
+// projection params.
+//
+// params with projection information.
+//
+//
+// Type: string
+//
+
+projection_param_file = "projection_global_0.5deg.params";
+
+//======================================================================
+//
+// End of Fcst Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for Params
+ **********************************************************************/
+
+//======================================================================
+//
+// PrecipAccumCalc .
+//
+//======================================================================
+ 
+//======================================================================
+//
+// Reads model mdv input with 3 hr accmulations at alternating lead 
+//   times and produces 3hr accumulations at every lead time.
+//
+//======================================================================
+ 
+///////////// runMode /////////////////////////////////
+//
+//
+// Type: enum
+// Options:
+//     REALTIME
+//     ARCHIVE
+//
+
+runMode = REALTIME;
+
+///////////// outputDataType //////////////////////////
+//
+//
+// Type: enum
+// Options:
+//     INT8
+//     INT16
+//     FLOAT32
+//
+
+outputDataType = FLOAT32;
+
+///////////// ensembleMembers /////////////////////////
+//
+//
+// Type: string
+// 1D array - variable length.
+//
+
+ensembleMembers = {
+ "gep01",
+ "gep02",
+ "gep03",
+ "gep04",
+ "gep05",
+ "gep06",
+ "gep07",
+ "gep08",
+ "gep09",
+ "gep10",
+ "gep11",
+ "gep12",
+ "gep13",
+ "gep14",
+ "gep15",
+ "gep16",
+ "gep17",
+ "gep18",
+ "gep19",
+ "gep20",
+ "gep21",
+ "gep22",
+ "gep23",
+ "gep24",
+ "gep25",
+ "gep26",
+ "gep27",
+ "gep28",
+ "gep29",
+ "gep30"
+};
+
+///////////// hr3AccumName ////////////////////////////
+//
+// 3 hour accum input short field name. (output has same name).
+//
+//
+// Type: string
+//
+
+hr3AccumName = "APCP3Hr";
+
+///////////// hr3AccumOutputDirTail ///////////////////
+//
+// 3 hour accumulation string to be appended to output url.
+//
+//
+// Type: string
+//
+
+hr3AccumOutputDirTail = "3hrAccum";
+
+///////////// hr6AccumName ////////////////////////////
+//
+// 6 hour accum input field name. (not output).
+//
+//
+// Type: string
+//
+
+hr6AccumName = "APCP6Hr";
+
+///////////// hr3UlwrfName ////////////////////////////
+//
+// 3 hour ULWRF average field name, input (output has same name).
+//
+// 2*ULWRF6Hr(lead i) -ULWRF3Hr (lead i-1 ) will be calculated to form 
+//   ULWRF3Hr (lead i) with output field name the same as the input 3hr 
+//   field .
+//
+//
+// Type: string
+//
+
+hr3UlwrfName = "ULWRF3Hr";
+
+///////////// hr6UlwrfName ////////////////////////////
+//
+// 6 hour ULWRF average field name, input.
+//
+// 2*ULWRF6Hr(lead i) - ULWRF3Hr (lead i-1) will be calculated to form 
+//   ULWRF3Hr (lead i) with output field name  hr3UlwrfName as above .
+//
+//
+// Type: string
+//
+
+hr6UlwrfName = "ULWRF6Hr";
+
+///////////// extraDataFields /////////////////////////
+//
+// Other data fields in the mdv file which will be appended to any new 
+//   file created.
+//
+//
+// Type: string
+// 1D array - variable length.
+//
+
+extraDataFields = {
+ "CAPE", "TMP"
+};
+
+///////////// forceAccumNonNegative ///////////////////
+//
+// Option to convert negative numbers great than -1 to zero after 
+//   subtraction of fields.
+//
+//
+// Type: boolean
+//
+
+forceAccumNonNegative = TRUE;
+
+///////////// numThreads //////////////////////////////
+//
+// Number of threads processing the data.
+//
+//
+// Type: int
+//
+
+numThreads = 1;
+//numThreads = 4;
+
+///////////// mdv_3hr_names ///////////////////////////
+//
+// mapping of MDV field names from short to long, 3 hour averages.
+//
+// When using server, long names are needed to do the reading.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string shortName;
+//      string longName;
+//   }
+//
+// 1D array - variable length.
+//
+
+mdv_3hr_names = {
+  {
+    shortName = "APCP3Hr",
+    longName = "Total precipitation"
+  }
+  ,
+  {
+    shortName = "CAPE",
+    longName = "Convective Available Potential Energy"
+  }
+  ,
+  {
+    shortName = "TMP",
+    longName = "Temperature"
+  }
+  ,
+  {
+    shortName = "ULWRF3Hr",
+    longName = "Upward Long-Wave Rad. Flux"
+  }
+};
+
+///////////// mdv_6hr_names ///////////////////////////
+//
+// mapping of MDV field names from short to long, 6 hour averages.
+//
+// When using server, long names are needed to do the reading.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string shortName;
+//      string longName;
+//   }
+//
+// 1D array - variable length.
+//
+
+mdv_6hr_names = {
+  {
+    shortName = "APCP6Hr",
+    longName = "Total precipitation"
+  }
+  ,
+  {
+    shortName = "CAPE",
+    longName = "Convective Available Potential Energy"
+  }
+  ,
+  {
+    shortName = "TMP",
+    longName = "Temperature"
+  }
+  ,
+  {
+    shortName = "ULWRF6Hr",
+    longName = "Upward Long-Wave Rad. Flux"
+  }
+};
+

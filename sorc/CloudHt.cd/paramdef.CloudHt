@@ -1,0 +1,196 @@
+/**********************************************************
+ * paramdef.CloudHt
+ *
+ * This file contains the TDRP parameter definitions for
+ * CloudHt.
+ */
+
+
+/***********************************************************************
+ * Debugging
+ */
+
+commentdef
+{
+  p_header = "DEBUGGING PARAMETERS";
+  p_text = "Parameters controlling debug outputs....";
+};
+
+typedef enum {
+  DEBUG_OFF, DEBUG_NORM, DEBUG_VERBOSE
+} debug_t;
+
+paramdef enum debug_t
+{
+  p_default = DEBUG_OFF;
+  p_descr = "Debug option";
+  p_help = "If set, debug messages will be printed appropriately";
+} debug;
+
+/***********************************************************************
+ * Process parameters
+ */
+
+commentdef
+{
+  p_header = "PROCESS PARAMETERS";
+};
+
+paramdef string
+{
+  p_descr = "Process instance";
+  p_help = "Used for registration with procmap.";
+  p_default = "Test";
+} instance;
+
+
+/***********************************************************************
+ * Process control parameters.
+ */
+
+commentdef
+{
+  p_header = "PROCESS CONTROL PARAMETERS";
+};
+
+typedef enum
+{
+  ARCHIVE,
+  REALTIME,
+  FILELIST
+} trigger_mode_t;
+
+paramdef enum trigger_mode_t
+{
+  p_descr = "Input triggering mode";
+  p_help = "Can be either ARCHIVE, REALTIME or FILELIST."
+           "ARCHIVE will require a -start <time> and -end <time> command line "
+           "argument be specified.\n"
+           "The format for the time arguments is similar to \"2001/1/1 00:00:00\". "
+           "FILELIST will process all files secified on the command line.   "
+           "REALTIME will use the _latest_data_info mechanism to determine "
+           "when a new file arrives.";
+  p_default = "REALTIME";
+} mode;
+
+/***********************************************************************
+ * Process I/O.
+ */
+commentdef
+{
+  p_header = "PROCESS I/O PARAMETERS";
+  p_text = "Parameters describing the input and output locations.";
+};
+
+typedef enum
+{
+  degK =  0,
+  degC =  1,
+  gpm =   2   // GeoPotentialMeters
+} units_t;
+
+typedef struct
+{
+  string url;
+  string field_name;
+  long field_num;
+  units_t input_units;
+} input_info_t;
+
+paramdef struct input_info_t
+{
+  p_descr = "Information about the input height field";
+  p_help = "Uses field_name to identify field in MDV file unless "
+           "field_name is \"\" in which case it uses field_num to "
+           "identify the input field.";
+  p_default = { "mdvp:://localhost::./mdv/gfs", "HGT_ISOB", 0, gpm };
+} height_field_info;
+
+paramdef struct input_info_t
+{
+  p_descr = "Information about the input tropopause height field";
+  p_help = "Uses field_name to identify field in MDV file unless "
+           "field_name is \"\" in which case it uses field_num to "
+           "identify the input field.\n"
+           "This field is only used if tropo_method is set to "
+           "TROPO_FROM_TROPO_HT_FIELD.\n";
+  p_default = { "mdvp:://localhost::./mdv/gfs", "HGT_TRO", 0, gpm };
+} tropo_height_field_info;
+
+paramdef struct input_info_t
+{
+  p_descr = "Information about the input temperature field";
+  p_help = "Uses field_name to identify field in MDV file unless "
+           "field_name is \"\" in which case it uses field_num to "
+           "identify the input field.";
+  p_default = { "mdvp:://localhost::./mdv/gfs", "TMP_ISOB", 0, degK };
+} temperature_field_info;
+
+paramdef struct input_info_t
+{
+  p_descr = "Information about the satellite input temperature field";
+  p_help = "Uses field_name to identify field in MDV file unless "
+           "field_name is \"\" in which case it uses field_num to "
+           "identify the input field.";
+  p_default = { "mdvp:://localhost::./mdv/satellite", "temperature", 0, degC };
+} sat_temperature_field_info;
+
+paramdef long
+{
+  p_descr = "Maximum satellite input valid age in seconds";
+  p_help = "Once the algorithm is triggered, it will not use any input data "
+           "older than this value.";
+  p_default = 1800;
+} sat_max_input_valid_secs;
+
+paramdef long
+{
+  p_descr = "Maximum model input valid age in seconds";
+  p_help = "Read best forecast within search margin of search time "
+           "Takes data from latest available gen time.";
+  p_default = 14400;
+} forecast_search_margin;
+
+paramdef string
+{
+  p_descr = "Output URL";
+  p_default = "mdvp:://localhost::./mdv/output";
+} output_url;
+
+/***********************************************************************
+ * Algorithm parameters.
+ */
+
+commentdef
+{
+  p_header = "ALGORITHM PARAMETERS";
+};
+
+typedef enum
+{
+  TROPO_FROM_TROPO_HT_FIELD,
+  TROPO_FROM_3D_HT_AND_TEMP_FIELDS
+} tropo_method_t;
+
+paramdef enum tropo_method_t
+{
+  p_descr = "The method to use for determining the tropopause height.";
+  p_default = TROPO_FROM_3D_HT_AND_TEMP_FIELDS;
+} tropo_method;
+
+typedef struct
+{
+  float min;
+  float max;
+} height_info_t;
+
+paramdef struct height_info_t
+{
+  p_descr = "The minimum and maximum height levels to process";
+  p_help = "The CloudHt algorithm does not process height levels\n"
+           "below and above certain values. \n\n"
+           "To also accommodate RUC information where gpm has been "
+           "changed to feet, a units field has been added.";
+  p_default = { 950.0, 50.0 };
+} height_info;
+

@@ -1,0 +1,107 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.ThresholdsDataBase
+ *
+ * This file contains the TDRP parameter definitions for ThresholdsDatabase
+ */
+
+commentdef
+{
+  p_header = "Thresholds Database Parms";
+  p_text =   "--------Params for a thresholds database ---- ";
+};
+
+typedef enum {LE,EQ,GE} Compare_t;
+
+paramdef boolean
+{
+  p_help = "TRUE if the thresholds come from a database, FALSE if this is data with a fixed threshold";
+  p_default = TRUE;
+} fromDatabase;
+
+paramdef string
+{
+  p_help = "Database and Model data field name";
+  p_default = "APCP3Hr";
+} fieldName;
+
+paramdef enum Compare_t
+{
+  p_help = "Type of comparison to see if data passes test";
+  p_default = GE;
+} compare;
+
+paramdef double
+{
+  p_help = "threshold to use when none in database (fromDatabase=true) or the fixed threshold (fromDatabase=false)";
+  p_defualt = 2.0;
+} coldstartThresh;
+
+paramdef boolean
+{
+  p_help = "TRUE to output the thresholds grids along with probabilities for this field";
+  p_default = TRUE;
+} doOutputThresholdsGrid;
+
+commentdef
+{
+  p_header = "Params for when fromDatabase=TRUE";
+  p_text =   "--------The remaining params are used only when fromDatabase=TRUE-----------";
+};
+
+paramdef string
+{
+  p_help = "location of thresholds database";
+  p_defult = "spdbp:://localhost::place";
+} databaseUrl;
+
+paramdef boolean
+{
+  p_help = "TRUE if this database is the one from which obar thresholds are used to create probabiliites (only one field can have this set to TRUE).  Output probability fields get created for each obar threshold specified here.";
+  p_default = TRUE;
+} isOutputObar;
+
+paramdef int
+{
+  p_help = "Number of fields total that have an outside threshold.  The outside thresholds are used ONLY when isOutputObar is true, ie for only one field. At most 4 fields are allowed in the design";
+  p_default = 3;
+} numFieldsWithOutsideThresh;
+
+typedef struct
+{
+  double obsThresh;
+  string griddedFieldName;
+  string field1;
+  double outsideThresh1;
+  string field2;
+  double outsideThresh2;
+  string field3;
+  double outsideThresh3;
+  string field4;
+  double outsideThresh4;
+} ObsThresh_t;
+
+paramdef struct ObsThresh_t
+{ 
+  p_help = "The specs for each obar threshold expected in inputs\n"
+    "obsThresh = the obs threshold expected in the database\n"
+    "griddedFieldName = name of output probabiity field (used only when isOutputObar is true)\n"
+    "field1 = first field with an outside threshold\n"
+    "outsideThresh1 = the outside threshold for the first field\n"
+    "field2 = second field with an outside threshold\n"
+    "outsideThresh2 = the outside threshold for the second field\n"
+    "field3 = third field with an outside threshold\n"
+    "outsideThresh3 = the outside threshold for the third field\n"
+    "field4 = fourth field with an outside threshold\n"
+    "outsideThresh4 = the outside threshold for the fourth field\n"
+    "NOTE: Expect the list of fields to be complete (all fields for which thresholds are used)";
+  p_default = {  {4.0, "ProbConvWx", "CAPE", 200, "APCP3Hr", 4.0, "ULWRF3hr", 200, "NotUsed", 0} };
+} obsSpec[];
+

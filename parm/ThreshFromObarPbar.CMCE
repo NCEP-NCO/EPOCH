@@ -1,0 +1,334 @@
+/**********************************************************************
+ * TDRP params for ParamsMainNone
+ **********************************************************************/
+
+//======================================================================
+//
+// Main Params.
+//
+//======================================================================
+ 
+///////////// debug_file //////////////////////////////
+//
+// debug file.
+//
+// File with debug settings.
+//
+//
+// Type: string
+//
+
+debug_file = "debug.params";
+
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+//
+// Used for registration with procmap.
+//
+//
+// Type: string
+//
+
+instance = "CMCE";
+
+///////////// procmap_interval_minutes ////////////////
+//
+// Pmu max minutes before restart.
+//
+// Used for registration with procmap.
+//
+//
+// Type: double
+//
+
+procmap_interval_minutes = 5;
+
+//======================================================================
+//
+// End of Main Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for ParamsObsIn
+ **********************************************************************/
+
+//======================================================================
+//
+// Fcst Params.
+//
+// --------data values for input and output--------------------
+// --------projection file specification ----------------------.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// description of params.
+//
+// Inputs/outputs share the same parameters:
+// name = simple name for this data
+// description = description of how its used in the app
+// url = where data comes from or is written
+// field = field name
+// units = data units
+// remap = TRUE if grid should be remapped to the ConvWx projection for 
+//   read
+// delta_minutes = minutes between obs data.
+//
+//======================================================================
+ 
+///////////// obs_input ///////////////////////////////
+//
+// input obs data.
+//
+// observation data input.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string name;
+//      string description;
+//      string url;
+//      string field;
+//      string units;
+//      boolean remap;
+//      int delta_minutes;
+//   }
+//
+// 1D array - variable length.
+//
+
+obs_input = {
+};
+
+///////////// projection_param_file ///////////////////
+//
+// projection params.
+//
+// params with projection information.
+//
+//
+// Type: string
+//
+
+projection_param_file = "projection_0.5deg.params";
+
+//======================================================================
+//
+// End of Fcst Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for Params
+ **********************************************************************/
+
+//======================================================================
+//
+// ThreshFromObarPbar.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// ThreshFromObarPbar.
+//
+//======================================================================
+ 
+///////////// pbarSpdb ////////////////////////////////
+//
+// The triggering SPDB, which is the pbar data.
+//
+//
+// Type: string
+//
+
+pbarSpdb = "spdbp:://localhost::$(PBAR_CMCE)";
+
+///////////// obarSpdb1 ///////////////////////////////
+//
+// Spdb with obar data,, input to this app, for precip.
+//
+//
+// Type: string
+//
+
+obarSpdb1 = "spdbp:://localhost::$(OBAR_CMORPH)";
+
+///////////// thresholdsSpdb1 /////////////////////////
+//
+// Spdb with thresholds for precip, output of this app.
+//
+//
+// Type: string
+//
+
+thresholdsSpdb1 = "spdbp:://localhost::$(THRESH_APCP_CMCE)";
+
+///////////// threshFieldColdstartThreshold1 //////////
+//
+// precip coldstart threshold.
+//
+//
+// Type: double
+//
+
+threshFieldColdstartThreshold1 = 2;
+
+///////////// obarThreshTargetBias1 ///////////////////
+//
+// Precip obar threshold and target bias values.
+//
+// obarThresh = Expected Obar precip threshold, should match what is in 
+//   the obar database
+// targetBias = value set so | bias - targetBias | is minimized.
+//
+//
+// Type: struct
+//   typedef struct {
+//      double obarThresh;
+//      double targetBias;
+//   }
+//
+// 1D array - variable length.
+//
+
+obarThreshTargetBias1 = {
+  {
+    obarThresh = 2.0,
+    targetBias = 0.00
+  }
+};
+
+///////////// obarSpdb2 ///////////////////////////////
+//
+// Spdb with obar data,, input to this app, for cloudtops.
+//
+//
+// Type: string
+//
+
+obarSpdb2 = "spdbp:://localhost::$(OBAR_CTH)";
+
+///////////// thresholdsSpdb2 /////////////////////////
+//
+// Spdb with thresholds for cloudtops, output of this app.
+//
+//
+// Type: string
+//
+
+thresholdsSpdb2 = "spdbp:://localhost::$(THRESH_ULWRF_CMCE)";
+
+///////////// threshFieldColdstartThreshold2 //////////
+//
+// cloudtop coldstart threshold.
+//
+//
+// Type: double
+//
+
+threshFieldColdstartThreshold2 = 200;
+
+///////////// obarThreshTargetBias2 ///////////////////
+//
+// Cloudtop obar threshold and target bias values.
+//
+// obarThresh = Expected Obar CTH threshold, should match what is in the 
+//   obar database
+// targetBias = value set so | bias - targetBias | is minimized.
+//
+//
+// Type: struct
+//   typedef struct {
+//      double obarThresh;
+//      double targetBias;
+//   }
+//
+// 1D array - variable length.
+//
+
+obarThreshTargetBias2 = {
+  {
+    obarThresh = 30000,
+    targetBias = 0.02
+  },
+  {
+    obarThresh = 35000,
+    targetBias = 0.00
+  },
+  {
+    obarThresh = 40000,
+    targetBias = -0.02
+  }
+};
+
+///////////// tilingParamFile /////////////////////////
+//
+// Parameter file with tiling information.
+//
+//
+// Type: string
+//
+
+tilingParamFile = "Tiling_20deg_10overlap_0.5deg.params";
+
+///////////// backfillDaysBack ////////////////////////
+//
+// Days to backfill at startup.  Look back this many days from now 
+//   (realtime) or t0 (archive) for gen times that have ensemble model 
+//   data but have not produced output, and process the ones that have all 
+//   inputs.  Should be set bigger for cloudtops versions that trigger off 
+//   of data that lags a few more days behind real time.
+//
+//
+// Type: int
+//
+
+backfillDaysBack = 0;
+
+///////////// num_threads /////////////////////////////
+//
+// Number of threads on ensemble member, 0 or 1 for no threading.
+//
+//
+// Type: int
+//
+
+num_threads = 1;
+//num_threads = 20;
+
+///////////// debug_state /////////////////////////////
+//
+// Set true to see more debugging of internal state.
+//
+//
+// Type: boolean
+//
+
+debug_state = FALSE;
+
+///////////// maxIncompleteDays ///////////////////////
+//
+// Maximum days without completing a gen time before outputting what can 
+//   be output for that gen time, used in realtime.
+//
+//
+// Type: double
+//
+
+maxIncompleteDays = 4.5;
+
+///////////// thresholdsMaxDaysBack ///////////////////
+//
+// Maximum days back to look for thresholds SPDB data, used to set 
+//   initial best threshold value.
+//
+//
+// Type: int
+//
+
+thresholdsMaxDaysBack = 30;
+

@@ -1,0 +1,286 @@
+/**********************************************************************
+ * TDRP params for MdvTComp
+ **********************************************************************/
+
+//======================================================================
+//
+// Program name: MdvTComp.
+//
+// MdvTComp performs a temporal composite process on Mdv data. It uses 
+//   files from the past to create a composite. The usage is 'MdvTComp 
+//   -params params_file'.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// DEBUG AND PROCESS CONTROL.
+//
+//======================================================================
+ 
+///////////// debug ///////////////////////////////////
+//
+// Debug option.
+//
+// If set, debug messages will be printed appropriately.
+//
+//
+// Type: enum
+// Options:
+//     DEBUG_OFF
+//     DEBUG_NORM
+//     DEBUG_VERBOSE
+//
+
+debug = DEBUG_NORM;
+
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+//
+// Used for registration with procmap.
+//
+//
+// Type: string
+//
+
+instance = "globcomp_CTH_3hr";
+
+///////////// mode ////////////////////////////////////
+//
+// Operating mode.
+//
+// In REALTIME mode, the program waits for a new input file. In ARCHIVE 
+//   mode, it moves through the data between the start and end times set 
+//   on the command line. In FILELIST mode, it moves through the list of 
+//   file names specified on the command line.
+//
+//
+// Type: enum
+// Options:
+//     ARCHIVE
+//     REALTIME
+//     FILELIST
+//
+
+mode = REALTIME;
+
+//======================================================================
+//
+// DATA INPUT.
+//
+//======================================================================
+ 
+///////////// input_url ///////////////////////////////
+//
+// URL for input data.
+//
+// This is used in REALTIME and ARCHIVE modes only. In FILELIST mode, 
+//   the file paths are specified on the command line.
+//
+//
+// Type: string
+//
+
+input_url = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1_2020.cloudHT_merged";
+
+///////////// set_vlevel_limits ///////////////////////
+//
+// Option to set plane vlevel limits.
+//
+// Mutually exclusive with set_plane_num_limits.
+//
+//
+// Type: boolean
+//
+
+set_vlevel_limits = FALSE;
+
+///////////// lower_vlevel ////////////////////////////
+//
+// Lower plane vlevel limit.
+//
+//
+// Type: float
+//
+
+lower_vlevel = 0;
+
+///////////// upper_vlevel ////////////////////////////
+//
+// Upper plane vlevel limit.
+//
+//
+// Type: float
+//
+
+upper_vlevel = 0;
+
+///////////// vert_composite //////////////////////////
+//
+// Option for creating vertical composite before time composite.
+//
+//
+// Type: boolean
+//
+
+vert_composite = FALSE;
+
+//======================================================================
+//
+// COMPOSITE DETAILS.
+//
+//======================================================================
+ 
+///////////// composite_type //////////////////////////
+//
+// Composite type.
+//
+// composite_type=MAXIMUM or AVERAGE.  At each point either the maximum 
+//   or average is accumulated.  Default = MAXIMUM.
+//
+//
+// Type: enum
+// Options:
+//     MAXIMUM
+//     AVERAGE
+//
+
+composite_type = MAXIMUM;
+
+///////////// composite_period ////////////////////////
+//
+// Files from this period in the past will be used for forming the time 
+//   composite.
+//
+// Composite period - secs.
+//
+//
+// Type: int
+//
+
+composite_period = 10800;
+
+///////////// min_delta_time //////////////////////////
+//
+// This allows you to force the images in the composite to be spaced by 
+//   some minimum time. For example, the files may be at 5 minute spacing, 
+//   but you may wish to ignore every second file and only composite every 
+//   10 minutes. In this case, set this parameter to say 8 minutes (480 
+//   secs) to force the spacing to longer than 5 minutes.
+//
+// Mininimum delta time between images in composite - secs.
+//
+//
+// Type: int
+//
+
+min_delta_time = 0;
+
+///////////// fields //////////////////////////////////
+//
+// Details of fields to be included in composite. Only specified fields 
+//   will be included in the time composite. If constrain_values is true, 
+//   you specify the min and max values to be composited. Values outside 
+//   these limits will be ignoreed and set to missin. If reset_missing is 
+//   true, missing values will be set to missing_fill_value after the 
+//   composite has been created.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string name;
+//      boolean constrain_values;
+//      double min_value;
+//      double max_value;
+//      boolean reset_missing;
+//      double missing_fill_value;
+//   }
+//
+// 1D array - variable length.
+//
+
+fields = {
+  {
+    name = "CloudHeight",
+    constrain_values = FALSE,
+    min_value = -5,
+    max_value = 100000,
+    reset_missing = FALSE,
+    missing_fill_value = -5
+  }
+};
+
+//======================================================================
+//
+// DATA OUTPUT.
+//
+//======================================================================
+ 
+///////////// output_url //////////////////////////////
+//
+// Output URL.
+//
+// Output data is written to this URL.
+//
+//
+// Type: string
+//
+
+output_url = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1_2020_CTH_3hr";
+
+///////////// output_encoding_type ////////////////////
+//
+// Set encoding type.
+//
+//
+// Type: enum
+// Options:
+//     ENCODING_INT8
+//     ENCODING_INT16
+//     ENCODING_FLOAT32
+//
+
+output_encoding_type = ENCODING_FLOAT32;
+
+///////////// output_frequency ////////////////////////
+//
+// Frequency of output.
+//
+// Output is synchronized either to the triggering (one output per 
+//   trigger), to the composite period (one output per composite period), 
+//   or to a particular list of hour/minute/seconds. The default is 
+//   SYNCH_OUTPUT_TO_TRIGGER.
+//
+//
+// Type: enum
+// Options:
+//     SYNCH_OUTPUT_TO_TRIGGER
+//     SYNCH_OUTPUT_TO_COMPOSITE
+//     SYNCH_OUTPUT_TO_LIST
+//
+
+output_frequency = SYNCH_OUTPUT_TO_LIST;
+
+///////////// output_times ////////////////////////////
+//
+// Hour,Minute,Second list.
+//
+// If output_frequency=SYNCH_OUTPUT_TO_LIST, this list is used to define 
+//   the particular times at which output is generated.  In all other 
+//   cases, this param is ignored.
+//
+//
+// Type: struct
+//   typedef struct {
+//      int hour;
+//      int minute;
+//      int second;
+//   }
+//
+// 1D array - variable length.
+//
+
+output_times = {
+{0,0,0}, {3,0,0}, {6,0,0}, {9,0,0}, {12,0,0}, {15,0,0}, {18,0,0}, {21,0,0}
+};

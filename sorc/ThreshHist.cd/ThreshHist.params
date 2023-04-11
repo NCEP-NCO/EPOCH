@@ -1,0 +1,166 @@
+/**********************************************************************
+ * TDRP params for ParamsMain
+ **********************************************************************/
+
+//======================================================================
+//
+// Main Params.
+//
+// --------Debug file -----------------------------------------
+// --------PMU setting ----------------------------------------
+// --------Triggering settings --------------------------------.
+//
+//======================================================================
+ 
+///////////// debug_file //////////////////////////////
+//
+// debug file.
+//
+// File with debug settings.
+//
+//
+// Type: string
+//
+
+debug_file = "$(CONTROL_DIR)/params/debug.params";
+
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+//
+// Used for registration with procmap.
+//
+//
+// Type: string
+//
+
+instance = "default";
+
+///////////// procmap_interval_minutes ////////////////
+//
+// Pmu max minutes before restart.
+//
+// Used for registration with procmap.
+//
+//
+// Type: double
+//
+
+procmap_interval_minutes = 5;
+
+//======================================================================
+//
+// Triggering.
+//
+// Triggering is for forecast data having a known gen time frequency and 
+//   a known set of lead times.  The triggering will be for this full set 
+//   of incoming data.
+// Triggering assumes REALTIME inputs unless the command line has args:
+//        -interval yyyymmddhhmmss yyyymmddhhmmss
+// in which case ARCHIVE mode triggering is assumed for existing data in 
+//   the range specified.
+//
+//======================================================================
+ 
+///////////// trigger_url /////////////////////////////
+//
+// Triggering URL.
+//
+//
+// Type: string
+//
+
+trigger_url = "spdbp:://localhost::EpochOps/spdb/CMCE/thresh";
+
+//======================================================================
+//
+// End of Main Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for Params
+ **********************************************************************/
+
+//======================================================================
+//
+// ThreshHist.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// Reads in thresholds SPDB back some number of days and takes averrage.
+//
+//======================================================================
+ 
+///////////// thresholds_max_days_back ////////////////
+//
+// Maximum days back to look for thresholds SPDB data.
+//
+//
+// Type: int
+//
+
+thresholds_max_days_back = 30;
+
+///////////// thresholds_spdb_out /////////////////////
+//
+// SPDB in which to write tile based thresholds.
+//
+//
+// Type: string
+//
+
+thresholds_spdb_out = "spdbp:://localhost::EpochOps/spdb/CMCE/thresh-hist";
+
+///////////// thresholds_spdb_in //////////////////////
+//
+// SPDB from which to read tile based thresholds.
+//
+//
+// Type: string
+//
+
+thresholds_spdb_in = "spdbp:://localhost::EpochOps/spdb/CMCE/thresh";
+
+///////////// input_precip_field //////////////////////
+//
+// Input precip field data in model data, goes into SPDB.
+//
+//
+// Type: string
+//
+
+input_precip_field = "APCP3Hr";
+
+///////////// precip_coldstart_threshold //////////////
+//
+// Input precip field data default coldstart threshold.
+//
+//
+// Type: double
+//
+
+precip_coldstart_threshold = 2;
+
+///////////// input_cape_field ////////////////////////
+//
+// Input CAPE field in model data, goes into SPDB as a fixed value.
+//
+//
+// Type: string
+//
+
+input_cape_field = "CAPE";
+
+///////////// cape_threshold //////////////////////////
+//
+// The fixed CAPE threshold to use.
+//
+//
+// Type: double
+//
+
+cape_threshold = 200;
+

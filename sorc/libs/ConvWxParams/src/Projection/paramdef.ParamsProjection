@@ -1,0 +1,159 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.ParamsProjecton
+ *
+ * This file contains the TDRP parameter definitions for ConvWx projections
+ */
+
+commentdef
+{
+  p_header = "Projection Parms";
+  p_text =   "--------Params that give the projection---------------------";
+};
+
+typedef enum
+{
+  REMAP_FLAT,
+  REMAP_LATLON,
+  REMAP_LAMBERT_CONFORMAL2,
+  REMAP_LAMBERT_AZIM_EQUAL_AREA
+} remap_t;
+
+paramdef enum remap_t
+{
+  p_default= REMAP_LAMBERT_CONFORMAL2;
+  p_descr = "type of projection";
+} projection;
+
+paramdef int
+{
+  p_descr = "nx";
+  p_help = "grid nx";
+  p_default = 0;
+} nx;
+
+paramdef int
+{
+  p_descr = "ny";
+  p_help = "grid ny";
+  p_default = 0;
+} ny;
+
+paramdef int
+{
+  p_descr = "nz";
+  p_help = "grid nz";
+  p_default = 1;
+} nz;
+
+
+paramdef double
+{
+  p_descr = "dx";
+  p_help = "grid dx ";
+  p_default = 0;
+} dx;
+
+paramdef double
+{
+  p_descr = "dy";
+  p_help = "grid dy ";
+  p_default = 0;
+} dy;
+
+paramdef double
+{
+  p_descr = "dz";
+  p_help = "grid dz ";
+  p_default = 0;
+} dz;
+
+paramdef double
+{
+  p_descr = "x0";
+  p_help = "grid minimum x ";
+  p_default = 0;
+} x0;
+
+paramdef double
+{
+  p_descr = "y0";
+  p_help = "grid minimum y ";
+  p_default = 0;
+} y0;
+
+paramdef double
+{
+  p_descr = "z0";
+  p_help = "grid minimum z";
+  p_default = 0;
+} z0;
+
+paramdef double
+{
+  p_descr = "origin_lat";
+  p_help = "latitude of origin";
+  p_default = 0;
+} origin_lat;
+
+paramdef double
+{
+  p_descr = "origin_longitude";
+  p_help = "longitude of origin";
+  p_default = 0;
+} origin_lon;
+
+paramdef double
+{
+  p_descr = "offset_origin_lat";
+  p_help = "latitude of offset origin";
+  p_default = 0;
+} offset_origin_lat;
+
+paramdef double
+{
+  p_descr = "offset_origin_longitude";
+  p_help = "longitude of offset origin";
+  p_default = 0;
+} offset_origin_lon;
+
+paramdef double
+{
+  p_descr = "rotation";
+  p_help = "degrees";
+  p_default = 0;
+} rotation;
+
+paramdef double
+{
+  p_descr = "lat1";
+  p_help = "lambert conformal lat1 value";
+  p_default = 0;
+} lat1;
+
+paramdef double
+{
+  p_descr = "lat2";
+  p_help = "lambert conformal lat2 value";
+  p_default = 0;
+} lat2;
+
+paramdef double
+{
+  p_descr = "earth radius km";
+  p_help = "Radius of the earth, kilometers";
+  p_default = 6371.204;
+} earth_radius_km;
+
+commentdef
+{
+  p_header = "End of Projection Params";
+  p_text = "";
+};

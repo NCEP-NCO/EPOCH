@@ -1,0 +1,32 @@
+commentdef {
+  p_header = "ObarCompute";
+}
+
+commentdef {
+  p_header = "Reads in obs data";
+}
+
+paramdef string
+{
+  p_help = "File with tiling paramters";
+  p_default = "Tiling_20deg_10overlap_0.5deg.params";
+} tiling_param_file;
+
+paramdef string
+{
+  p_help = "SPDB in which to store tile based obar";
+  p_default = "spdbp:://localhost::x";
+} obar_spdb;
+
+paramdef string
+{
+  p_help = "Input field name, goes into SPDB";
+  p_default = "APCP3Hr";
+} input_field;
+
+paramdef double
+{
+  p_help = "Threshold for mean obs input data value";
+  p_default = {0.0};
+} obs_threshold[];
+

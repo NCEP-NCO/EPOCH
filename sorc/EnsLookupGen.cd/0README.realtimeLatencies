@@ -1,0 +1,30 @@
+CMCE model data:  6 hours later than real time
+GEFS              5 hours
+
+latest lead time = 57 hours
+
+cmorph data:      22 to 43 hours later than real time
+
+
+So at gen = t0, we have approximately
+
+data valid time:          real time
+
+t0 + 57 hours             t0 + 57 + 6
+
+cmorph for t0 + 57 shows up anywhere from t0 + 57 + 22  to t0 + 57 + 43
+
+which is when gen time t0 gets processed:
+
+meaning for enslookupgen, triggering model data in archive mode for a gen time will use thresholds that were generated anywhere from
+
+57+22 to 57+43 hours old
+
+79    to 100   hours old
+
+3.2 days  to 4.16 days
+
+roughly 3 to 4 days
+Set params to 3 to 4 days, with 3.5 as the 'best'
+
+

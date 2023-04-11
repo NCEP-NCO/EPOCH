@@ -1,0 +1,330 @@
+/**********************************************************************
+ * TDRP params for MdvResample
+ **********************************************************************/
+
+//======================================================================
+//
+// MdvResample.
+//
+// This program resamples MDV data.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// DEBUGGING PARAMETERS.
+//
+// Parameters controlling debug outputs.
+//
+//======================================================================
+ 
+///////////// debug ///////////////////////////////////
+//
+// debug flag.
+//
+//
+// Type: boolean
+//
+
+debug = TRUE;
+
+///////////// verbose /////////////////////////////////
+//
+// verbose debug flag.
+//
+// If true, verbose debug messages will be printed.
+//
+//
+// Type: boolean
+//
+
+verbose = FALSE;
+
+//======================================================================
+//
+// PROCESS PARAMETERS.
+//
+//======================================================================
+ 
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+//
+// Used for registration with procmap.
+//
+//
+// Type: string
+//
+
+instance = "globcomp_CTH_3hr_0.5deg";
+
+//======================================================================
+//
+// PROCESS TRIGGERING PARAMETERS.
+//
+// Parameters describing the process triggering.
+//
+//======================================================================
+ 
+///////////// trigger_mode ////////////////////////////
+//
+// Input triggering mode.
+//
+// In LATEST_DATA mode, the program triggers whenever a new input file 
+//   appears.
+// In TIME_LIST mode, the program operates on every input file between 
+//   the start and end times specified on the command line.
+// In FCST_TIME_LIST mode, the program operates on every input file in a 
+//   forecast directory structure that are valid between the supplied 
+//   start and end time.
+//
+//
+// Type: enum
+// Options:
+//     LATEST_DATA
+//     TIME_LIST
+//     FCST_TIME_LIST
+//
+
+trigger_mode = TIME_LIST;
+
+//======================================================================
+//
+// PROCESS I/O PARAMETERS.
+//
+// Parameters describing the input and output locations.
+//
+//======================================================================
+ 
+///////////// input_url ///////////////////////////////
+//
+// Input URL.
+//
+// The data in this URL must be on a lat/lon or flat projection.
+//
+//
+// Type: string
+//
+
+input_url = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1_2020_CTH_3hr";
+
+///////////// max_valid_secs //////////////////////////
+//
+// Maximum valid time for input files in seconds.
+//
+//
+// Type: int
+//
+
+max_valid_secs = 25200;
+
+///////////// specify_fields //////////////////////////
+//
+// Flag indicating whether to specify the fields to process.
+//
+// If set to false, all fields in the input file will be resampled and 
+//   included in the output file. If set to true, only the fields 
+//   specified in the input_fields parameter will be processed.
+//
+//
+// Type: boolean
+//
+
+specify_fields = FALSE;
+
+///////////// use_field_names /////////////////////////
+//
+// Flag indicating whether to use names or numbers to identify the input 
+//   fields.
+//
+// Set to true to use field names; false to use field numbers.
+//
+//
+// Type: boolean
+//
+
+use_field_names = TRUE;
+
+///////////// input_fields ////////////////////////////
+//
+// Information about the input fields to process.
+//
+// These fields must be in pressure units, using the same units as the 
+//   vertical units of the temperature field. The pressure values are 
+//   converted to height values in the output.
+// Note that all of the fields processed must use the same projection.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string field_name;
+//      int field_num;
+//   }
+//
+// 1D array - variable length.
+//
+
+input_fields = {
+  {
+    field_name = "PRES_CCBL",
+    field_num = 0
+  }
+};
+
+///////////// output_url //////////////////////////////
+//
+// Output URL.
+//
+//
+// Type: string
+//
+
+output_url = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1_2020_CTH_3hr_0p5";
+
+///////////// write_nonforecast_style /////////////////
+//
+// Write non forecast style output. Default is to write forecast data as 
+//   forecast data, otherwise use flat directory.
+//
+//
+// Type: boolean
+//
+
+write_nonforecast_style = TRUE;
+
+//======================================================================
+//
+// ALGORITHM PARAMETERS.
+//
+//======================================================================
+ 
+///////////// resample_radius /////////////////////////
+//
+// Radius, in km, of the area around the center of the output grid to 
+//   use resampling the grid square.
+//
+//
+// Type: double
+//
+
+resample_radius = 25;
+
+///////////// resample_proj_info //////////////////////
+//
+// Projection information for the resampled grid.
+//
+//
+// Type: struct
+//   typedef struct {
+//      proj_type_t proj_type;
+//        Options:
+//          PROJ_LATLON
+//          PROJ_FLAT
+//          PROJ_LAMBERT
+//      double minx;
+//      double miny;
+//      int nx;
+//      int ny;
+//      double dx;
+//      double dy;
+//      double origin_lat;
+//      double origin_lon;
+//      double rotation;
+//   }
+//
+//
+
+resample_proj_info = {
+    proj_type = PROJ_LATLON,
+//    minx = 0.125,
+//    miny = -59.975,
+    minx = 0.0,
+    miny = -60.0,
+    nx = 720,
+    ny = 280,
+    dx = 0.5,
+    dy = 0.5,
+    origin_lat = 0,
+    origin_lon = 0,
+    rotation = 0
+};
+
+///////////// lambert_lat1 ////////////////////////////
+//
+// lat1 when projection = PROJ_LAMBERT.
+//
+//
+// Type: double
+//
+
+lambert_lat1 = 0;
+
+///////////// lambert_lat2 ////////////////////////////
+//
+// lat2 when projection = PROJ_LAMBERT.
+//
+//
+// Type: double
+//
+
+lambert_lat2 = 0;
+
+///////////// stat_type ///////////////////////////////
+//
+// Type of statistic to use for resampling.
+//
+//
+// Type: enum
+// Options:
+//     STAT_MAX
+//     STAT_MIN
+//     STAT_MEAN
+//     STAT_MEDIAN
+//     STAT_MODE_MAX
+//     STAT_MODE_MIN
+//     STAT_MODE_MEAN
+//     STAT_MODE_MEDIAN
+//     STAT_PERCENTILE
+//
+
+stat_type = STAT_MAX;
+
+///////////// stat_percentile_value ///////////////////
+//
+// Percentile for the STAT_PERCENTILE statistic.
+//
+// The STAT_PERCENTILE statistic returns the value that is greater than 
+//   this percentage of the data values.
+//
+// Minimum val: 0
+// Maximum val: 100
+//
+// Type: double
+//
+
+stat_percentile_value = 100;
+
+///////////// num_threads /////////////////////////////
+//
+// Number of threads.
+//
+// Set to 0 or 1 to disable threading.
+//
+//
+// Type: int
+//
+
+num_threads = 1;
+
+///////////// thread_debug ////////////////////////////
+//
+// Thread debugging.
+//
+// Set to true to enable threading debug messages.
+//
+//
+// Type: boolean
+//
+
+thread_debug = FALSE;
+

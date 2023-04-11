@@ -1,0 +1,252 @@
+/**********************************************************************
+ * TDRP params for CloudHt
+ **********************************************************************/
+
+//======================================================================
+//
+// DEBUGGING PARAMETERS.
+//
+// Parameters controlling debug outputs.
+//
+//======================================================================
+ 
+///////////// debug ///////////////////////////////////
+//
+// Debug option.
+// If set, debug messages will be printed appropriately.
+//
+// Type: enum
+// Options:
+//     DEBUG_OFF
+//     DEBUG_NORM
+//     DEBUG_VERBOSE
+//
+
+debug = DEBUG_NORM;
+
+//======================================================================
+//
+// PROCESS PARAMETERS.
+//
+//======================================================================
+ 
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+// Used for registration with procmap.
+// Type: string
+//
+
+instance = "NESDIS2020.3D_hgtTemp";
+
+//======================================================================
+//
+// PROCESS CONTROL PARAMETERS.
+//
+//======================================================================
+ 
+///////////// mode ////////////////////////////////////
+//
+// Input triggering mode.
+// Can be either ARCHIVE, REALTIME or FILELIST.ARCHIVE will require a 
+//   -start <time> and -end <time> command line argument be specified.
+// The format for the time arguments is similar to "2001/1/1 00:00:00". 
+//   FILELIST will process all files secified on the command line.   
+//   REALTIME will use the _latest_data_info mechanism to determine when a 
+//   new file arrives.
+//
+// Type: enum
+// Options:
+//     ARCHIVE
+//     REALTIME
+//     FILELIST
+//
+
+mode = REALTIME;
+
+//======================================================================
+//
+// PROCESS I/O PARAMETERS.
+//
+// Parameters describing the input and output locations.
+//
+//======================================================================
+ 
+///////////// height_field_info ///////////////////////
+//
+// Information about the input height field.
+// Uses field_name to identify field in MDV file unless field_name is "" 
+//   in which case it uses field_num to identify the input field.
+//
+// Type: struct
+//   typedef struct {
+//      string url;
+//      string field_name;
+//      long field_num;
+//      units_t input_units;
+//        Options:
+//          degK
+//          degC
+//          gpm
+//   }
+//
+//
+
+height_field_info = {
+    url = "mdvp:://localhost::$(MERGED_GFS)",
+    field_name = "HGT_ISBL",
+    field_num = 0,
+    input_units = gpm
+};
+
+///////////// tropo_height_field_info /////////////////
+//
+// Information about the input tropopause height field.
+// Uses field_name to identify field in MDV file unless field_name is "" 
+//   in which case it uses field_num to identify the input field.
+// This field is only used if tropo_method is set to 
+//   TROPO_FROM_TROPO_HT_FIELD.
+//
+// Type: struct
+//   typedef struct {
+//      string url;
+//      string field_name;
+//      long field_num;
+//      units_t input_units;
+//        Options:
+//          degK
+//          degC
+//          gpm
+//   }
+//
+//
+
+tropo_height_field_info = {
+    url = "mdvp:://localhost::$(GFS_0.25A)",
+    field_name = "HGT_TRO",
+    field_num = 0,
+    input_units = gpm
+};
+
+///////////// temperature_field_info //////////////////
+//
+// Information about the input temperature field.
+// Uses field_name to identify field in MDV file unless field_name is "" 
+//   in which case it uses field_num to identify the input field.
+//
+// Type: struct
+//   typedef struct {
+//      string url;
+//      string field_name;
+//      long field_num;
+//      units_t input_units;
+//        Options:
+//          degK
+//          degC
+//          gpm
+//   }
+//
+//
+
+temperature_field_info = {
+    url = "mdvp:://localhost::$(MERGED_GFS)",
+    field_name = "TMP_ISBL",
+    field_num = 44,
+    input_units = degK
+};
+
+///////////// sat_temperature_field_info //////////////
+//
+// Information about the satellite input temperature field.
+// Uses field_name to identify field in MDV file unless field_name is "" 
+//   in which case it uses field_num to identify the input field.
+//
+// Type: struct
+//   typedef struct {
+//      string url;
+//      string field_name;
+//      long field_num;
+//      units_t input_units;
+//        Options:
+//          degK
+//          degC
+//          gpm
+//   }
+//
+//
+
+sat_temperature_field_info = {
+    url = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1deg_directFromGmgsi2020/thresh_ir",
+    field_name = "ir",
+    field_num = 1,
+    input_units = degK
+};
+
+///////////// sat_max_input_valid_secs ////////////////
+//
+// Maximum satellite input valid age in seconds.
+// Once the algorithm is triggered, it will not use any input data older 
+//   than this value.
+// Type: long
+//
+
+sat_max_input_valid_secs = 3600;
+
+///////////// forecast_search_margin //////////////////
+//
+// Maximum model input valid age in seconds.
+// Read best forecast within search margin of search time Takes data 
+//   from latest available gen time.
+// Type: long
+//
+
+forecast_search_margin = 86400;
+
+///////////// output_url //////////////////////////////
+//
+// Output URL.
+// Type: string
+//
+
+output_url = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1_2020.3D_hgtTemp";
+
+//======================================================================
+//
+// ALGORITHM PARAMETERS.
+//
+//======================================================================
+ 
+///////////// tropo_method ////////////////////////////
+//
+// The method to use for determining the tropopause height.
+//
+// Type: enum
+// Options:
+//     TROPO_FROM_TROPO_HT_FIELD
+//     TROPO_FROM_3D_HT_AND_TEMP_FIELDS
+//
+
+tropo_method = TROPO_FROM_3D_HT_AND_TEMP_FIELDS;
+
+///////////// height_info /////////////////////////////
+//
+// The minimum and maximum height levels to process.
+// The CloudHt algorithm does not process height levels
+// below and above certain values. 
+
+// To also accommodate RUC information where gpm has been changed to 
+//   feet, a units field has been added.
+//
+// Type: struct
+//   typedef struct {
+//      float min;
+//      float max;
+//   }
+//
+//
+
+height_info = {
+    min = 950,
+    max = 50
+};
+

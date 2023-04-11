@@ -1,0 +1,48 @@
+#PBS -N epoch_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -l walltime=02:30:00
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l place=shared,select=%NODES:1%:ncpus=%NCPUS:1%:mpiprocs=%PTILE:1%:mem=%MEM:100%GB:prepost=true
+#PBS -l debug=true
+
+model=epoch
+%include <head.h>
+%include <envir-p1.h>
+
+module load craype/${craype_ver:?}
+module load intel/${intel_ver:?}
+#module load cray-mpich/${cray_mpich_ver:?} # not needed
+module load python/${python_ver:?}
+module load hdf5/${hdf5_ver:?}
+module load netcdf/${netcdf_ver:?}
+module load udunits/${udunits_ver:?}
+#module load gsl/${gsl_ver:?}  # not needed
+#module load nco/${nco_ver:?} # prereq hdf5, netcdf, udunits, gsl # not needed
+#module load wgrib2/${wgrib2_ver:?} # not needed
+#module load util_shared/${util_shared_ver:?} # not needed
+module load jasper/${jasper_ver:?} # runs without, but grib2 files show 2.0.14 used instead of 2.0.25
+module list
+
+export OMP_NUM_THREADS=1
+export cyc=%CYC%
+
+${HOMEepoch}/jobs/JEPOCH
+
+if [ $? -ne 0 ]; then
+   ecflow_client --msg="***JOB ${ECF_NAME} ERROR RUNNING J-SCRIPT ***"
+   ecflow_client --abort
+   exit
+fi
+
+%include <tail.h>
+%manual
+######################################################################
+#
+#  PURPOSE:  To execute the job that runs the Epoch forecast
+#
+######################################################################
+#
+#
+%end

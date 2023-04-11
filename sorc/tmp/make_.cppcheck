@@ -1,0 +1,11 @@
+MY_CPPCHECKFLAGS = -E Params.cc -E Params.hh -E Parms$(TARGET_FILE)IO.hh -E Parms$(TARGET_FILE)IO.cc -AddStyleFAA -AllowPrivateNoDoxygen  -exclude-rules="4.09,4.11,4.12,4.14,4.16"
+
+MY_XCPPCHECKFLAGS = -E Params.cc -E Params.hh -E Parms$(TARGET_FILE)IO.hh -E Parms$(TARGET_FILE)IO.cc -AddStyleFAA -exclude-rules="4.16,4.09,4.14,4.12,4.11"    -AllowPrivateNoDoxygen
+                   
+
+LOC_INC_DIR = .
+
+
+
+
+

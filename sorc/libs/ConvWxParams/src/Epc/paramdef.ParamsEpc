@@ -1,0 +1,79 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.Epc
+ *
+ * This file contains the TDRP parameter definitions for params shared by NiwotPC and NiwotLpc
+ * 
+ */
+
+commentdef
+{
+  p_header = "Epc";
+  p_text =   "--------Params shared by NiwotPC and NiwotLpc ---";
+};
+
+typedef struct
+{
+  double gen_hour;
+  double lead_hour;
+  double weight;
+} fuzzy_t;
+
+paramdef struct fuzzy_t
+{
+  p_descr = "Time tapering as a function of gen hour and lead hour";
+  p_help = "The fuzzy 2 dimensional function f(gen,lead) = weight uses interpolation to fill in values not explicitly defined";
+  p_default = {};
+} time_taper[];
+
+typedef struct
+{
+  double threshold;
+  double weight;
+} stats_parm_t;
+
+paramdef struct stats_parm_t
+{
+  p_descr = "params for statistics";
+  p_help = "threshold = data thresh\n"
+           "weight = importance\n";
+} stats_parm[];
+
+typedef enum
+{
+  CSI,
+  CORRELATION
+} stat_t;
+
+paramdef enum stat_t
+{
+  p_help = "which stat to compute";
+  p_default = CSI;
+} stat_type;
+
+paramdef int
+{
+  p_descr = "model latency range";
+  p_help = "hours";
+} model_latency[2];
+
+paramdef int
+{
+  p_descr = "uv data latency to use when triggering ARCHIVE data";
+  p_help = "(hours).  Only ARCHIVE, in REALTIME we find the newest data valid now";
+} uv_latency;
+
+paramdef double
+{
+  p_descr = "minutes to wait for UV when triggering REALTIME";
+  p_help = "maximum minutes to wait for UV data to match up to latency adjusted forecast data, REALTIME";
+  p_default = 5.0;
+} real_time_uv_wait_max_minutes;
+

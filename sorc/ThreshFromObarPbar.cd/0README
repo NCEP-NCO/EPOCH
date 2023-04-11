@@ -1,0 +1,19 @@
+ThresholdsData
+           SingleThresholdData (0,0,0)
+                FieldThreshInstance
+                  FieldThreshCompare field0
+		      fieldname
+		      threshold tile0
+		      threshold tile1
+		      threshold tile2...
+                  FieldThreshCompare field1
+
+                  FieldThreshCompare field2
+
+           SingleThresholdsData (0,0,1)
+
+
+
+           SingleThresholdsData (n0,n1,n2)
+
+

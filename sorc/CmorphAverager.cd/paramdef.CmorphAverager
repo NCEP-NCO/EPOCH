@@ -1,0 +1,26 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* Copyright, University Corporation for Atmospheric Research (UCAR) 2009-2017. */
+/* The Government's right to use this data and/or software is restricted per */
+/* the terms of Cooperative Agreement between UCAR and the National  Science */
+/* Foundation, to government use only which includes the nonexclusive, */
+/* nontransferable, irrevocable, royalty-free license to exercise or have */
+/* exercised for or on behalf of the U.S. Government throughout the world. */
+/* All other rights are reserved. */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+
+commentdef
+{
+  p_header = "CmorphAverager algorithm parameters";
+}
+
+commentdef 
+{
+  p_header = "Read irregularly time spaced obs data and force output at regular times, using closest time >=";
+}
+
+paramdef boolean
+{
+  p_header = "Option to convert from input units mm/hr to output units mm/3hr by multiplying by 3";
+  p_default = TRUE;
+} unitsConvert;
+

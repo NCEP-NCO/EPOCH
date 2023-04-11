@@ -1,0 +1,286 @@
+#!/bin/sh
+
+# Print starting time
+date
+
+# Prepend time to output
+export PS4=' $SECONDS + '
+
+# Enable debug logging
+set -xa
+
+# Create temporary working directory
+export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
+mkdir -p $DATA
+cd $DATA
+
+# Output for executables
+export pgmout=OUTPUT.$$
+# Set up temporal variables, including PDY
+export cycle=${cycle:-t${cyc}z}
+
+setpdy.sh 30
+. ${DATA}/PDY
+echo $PDY
+export PDYHH=${PDY}${cyc}
+prev_cycle=$($NDATE -6 $PDYHH)
+prev_PDYcyc=${prev_cycle:0:8}
+prev_cyc=${prev_cycle:8:10}
+echo $prev_PDYcyc
+echo $prev_cyc
+
+# Set up parent directory and all sub-directories for current model
+export HOMEepoch=${HOMEepoch:-${PACKAGEROOT:?}}
+export EXECepoch=${HOMEepoch}/exec
+export PARMepoch=${HOMEepoch}/parm
+export USHepoch=${HOMEepoch}/ush
+export SCRIPTSepoch=${HOMEepoch}/scripts
+export LOGepoch=${DATA}/log
+#export KEEPepoch=${SCRIPTSepoch}
+export WORKSPACE=${DATA}/workspace
+
+export maillist=${maillist:-'nco.spa@noaa.gov,alex.korner@noaa.gov'}
+
+# Provide access to NCO shared executables
+#export HOMEnco=${HOMEnco:-${PACKAGEROOT}/nco_shared.${nco_shared_ver}}
+
+# Variables used in com directory organization
+export NET=${NET:-epoch}
+export RUN=${RUN:-epoch}
+
+# Locations of incoming data
+#export COMINgefsa=${COMINgefsa:-$(compath.py  prod/gefs/${gefs_ver})}
+#export COMINgefsb=${COMINgefsb:-$(compath.py  prod/gefs/${gefs_ver})}
+#export COMINcmce=${COMINcmce:-$(compath.py  prod/naefs/${cmce_ver})}
+export COMINgefsa=${COMINgefsa:-$(compath.py  ${envir}/gefs/${gefs_ver})}
+export COMINgefsb=${COMINgefsb:-$(compath.py  ${envir}/gefs/${gefs_ver})}
+export COMINcmce=${COMINcmce:-$(compath.py ${envir}/naefs/${cmce_ver})}
+#echo $COMPATH
+export COMINgfs=${COMINgfs:-$(compath.py  ${envir}/gfs/${gfs_ver})}
+#export COMPATH=/lfs/h1/awc/awc/noscrub/Alex.Korner/repo/test_epoch/com/epoch
+export COMINepoch=${COMINepoch:-$(compath.py  ${envir}/$NET/$epoch_ver)}
+export COMINstate=${COMINstate:-$(compath.py  $NET/$epoch_ver/$RUN.$prev_PDYcyc/$prev_cyc/Epoch.state)}
+export COMINinputstate=${COMINinputstate:-$(compath.py  $NET/$epoch_ver/$RUN.$prev_PDYcyc/$prev_cyc/EpochInputs.state)}
+
+
+export gfsPattern=${COMINgfs}/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2.0p25.fLLL
+export gfsPatternb=${COMINgfs}/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2b.0p25.fLLL
+
+i=-6
+while [ ! -s $COMINstate ] || [ ! -s $COMINinputstate]
+do
+	
+	i=$((i-6))
+	echo $i
+	echo 'Searching back $i hours for state files'
+	prev_cycle=$($NDATE $i $PDYHH)
+	prev_PDYcyc=${prev_cycle:0:8}
+	prev_cyc=${prev_cycle:8:10}
+
+        export COMINstate=$(compath.py $NET/$epoch_ver/$RUN.$prev_PDYcyc/$prev_cyc/Epoch.state)
+	export COMINinputstate=$(compath.py  $NET/$epoch_ver/$RUN.$prev_PDYcyc/$prev_cyc/EpochInputs.state)
+	echo $COMINstate
+	echo $COMINinputstate
+
+	if [[ -s $COMINstate && -s $COMINinputstate ]]
+	then
+		break	
+	elif [[ $i -lt -168 ]]
+	then
+		msg='WARNING: NO STATE OR INPUTSTATE FILE'
+		echo "$msg" | mail.py -c $maillist
+		#err_exit
+		break	
+	fi
+done
+
+# This will need to be updated with dcom or com paths once the data is there.
+export COMINcmorph2=$DCOMROOT
+export COMINglobcomp=$DCOMROOT
+
+export cmorph2Path=$DCOMROOT
+export cmorph2Pattern=$DCOMROOT/YYYYMMDD/cmorph2/CMORPH2_0.25deg-30min_SYYYYMMDDHHMM_EYYYYMMDDHHmm.RT.nc
+export globcompDataPathLIR=$DCOMROOT
+
+#Check to see if CMCE directory exists, if not, warn.
+
+# Locations of outgoing data
+
+export COMOUT=${COMOUT:-$(compath.py -o $NET/$epoch_ver/$RUN.$PDY)}
+echo $COMOUT
+
+export COMOUTgrib2=${COMOUTgrib2:-$COMOUT/$cyc}
+export COMOUTrestart=${COMOUTrestart:-$COMOUTgrib2/restart}
+export COMOUTrestartS=${COMOUTrestartS:-$COMOUTgrib2/restart/Epoch.state}
+export COMOUTrestartIS=${COMOUTrestartIS:-$COMOUTgrib2/restart/EpochInputs.state}
+export COMINrestartIS=$(compath.py  $NET/$epoch_ver/$RUN.$PDY/$cyc/restart)
+export COMINrestart=$(compath.py  $NET/$epoch_ver/$RUN.$PDY/$cyc/restart)
+
+export COMOUTwmo=${COMOUTwmo:-$COMOUT/wmo}
+export COMOUTmdv=${COMOUTmdv:-$COMOUT/mdv}
+export COMOUTspdb=${COMOUTspdb:-$COMOUT/spdb}
+
+# Create output directories
+#cd $HOMEepoch
+
+if [ "$SENDCOM" = YES ]; then
+  mkdir -p $COMOUT $COMOUTgrib2
+fi
+
+if [ "$KEEPDATA" = YES ]; then
+  mkdir -p $COMOUTmdv $COMOUTspdb
+  echo $COMOUTmdv
+  echo $COMOUTspdb
+fi
+
+export InputStateFile=${COMOUTgrib2}/EpochInputs.state
+export StateFile=${COMOUTgrib2}/Epoch.state
+ 
+export workspace_state=$WORKSPACE/Epoch.state
+export workspace_inputstate=$WORKSPACE/EpochInputs.state
+
+
+#COMOUT MDV
+
+export COMOUTmerged=${COMOUTmerged:-$COMOUTmdv/model/gfs_merged}
+export COMOUTgfs0p25a=${COMOUTgfs0p25a:-$COMOUTmdv/model/gfs_0p25a}
+export COMOUTcmceProbCloudTopOpt=${COMOUTcmceProbCloudTopOpt:-$COMOUTmdv/model/cmceProbCloudTopOpt}
+export COMOUTcmceProbOpt=${COMOUTcmceProbOpt:-$COMOUTmdv/model/cmceProbOpt}      
+export COMOUTgefsProbCloudTopOpt=${COMOUTgefsProbCloudTopOpt:-$COMOUTmdv/model/gefsProbCloudTopOpt} 
+export COMOUTgefsProbOpt=${COMOUTgefsProbOpt:-$COMOUTmdv/model/gefsProbOpt}
+
+
+#COMOUT SPDB pbar
+
+export COMOUTpbar=${COMOUTpbar:-$COMOUTspdb/pbar}
+export COMOUTpbarCmce=${COMOUTpbarCmce:-$COMOUTspdb/pbar/CMCE}
+export COMOUTpbarGefs=${COMOUTpbarGefs:-$COMOUTspdb/pbar/GEFS}
+
+#COMOUT SPDB obar
+
+export COMOUTobar=${COMOUTobar:-$COMOUTspdb/obar}
+export COMOUTcloudHeight=${COMOUTcloudHeight:-$COMOUTspdb/obar/CloudHeight}
+export COMOUTsatellite=${COMOUTsatellite:-$COMOUTspdb/obar/CloudHeight/satellite}
+export COMOUTprecip=${COMOUTprecip:-$COMOUTspdb/obar/Precip}
+export COMOUTcmorph=${COMOUTcmorph:-$COMOUTspdb/obar/Precip/cmorph}
+
+#COMOUT SPDB thresholds
+
+export COMOUTthresholds=${COMOUTthresholds:-$COMOUTspdb/thresholds}
+
+export COMOUTapcp=${COMOUTapcp:-$COMOUTspdb/thresholds/APCP}
+export COMOUTthreshApcp=${COMOUTthreshApcp:-$COMOUTspdb/thresholds/APCP/thresh}
+export COMOUTthreshApcpCmce=${COMOUTthreshApcpCmce:-$COMOUTspdb/thresholds/APCP/thresh/CMCE}
+export COMOUTthreshApcpGefs=${COMOUTthreshApcpGefs:-$COMOUTspdb/thresholds/APCP/thresh/GEFS}
+
+export COMOUTthreshHistApcp=${COMOUTthreshHistApcp:-$COMOUTspdb/thresholds/APCP/thresh-hist}
+export COMOUTthreshHistApcpCmce=${COMOUTthreshHistApcpCmce:-$COMOUTspdb/thresholds/APCP/thresh-hist/CMCE}
+export COMOUTthreshHistApcpGefs=${COMOUTthreshHistApcpGefs:-$COMOUTspdb/thresholds/APCP/thresh-hist/GEFS}
+
+export COMOUTulwrf=${COMOUTulwrf:-$COMOUTspdb/thresholds/ULWRF}
+export COMOUTthreshUlwrf=${COMOUTthreshUlwrf:-$COMOUTspdb/thresholds/ULWRF/thresh}
+export COMOUTthreshUlwrfCmce=${COMOUTthreshUlwrfCmce:-$COMOUTspdb/thresholds/ULWRF/thresh/CMCE}
+export COMOUTthreshUlwrfGefs=${COMOUTthreshUlwrfGefs:-$COMOUTspdb/thresholds/ULWRF/thresh/GEFS}
+
+export COMOUTthreshHistUlwrf=${COMOUTthreshHistUlwrf:-$COMOUTspdb/thresholds/ULWRF/thresh-hist}
+export COMOUTthreshHistUlwrfCmce=${COMOUTthreshHistUlwrfCmce:-$COMOUTspdb/thresholds/ULWRF/thresh-hist/CMCE}
+export COMOUTthreshHistUlwrfGefs=${COMOUTthreshHistUlwrfGefs:-$COMOUTspdb/thresholds/ULWRF/thresh-hist/GEFS}
+
+
+# $RAP_DATA_DIR is hard coded into some RAL libraries as a location for data.
+#export RAP_DATA_DIR=$DATA
+
+
+# TMPDIR must be defined
+export TMPDIR=$DATA # I believe I set this here for experimental purposes, we can re-define this
+
+
+# Set up temporary data paths and files
+#cd $DATA
+mkdir -p $DATA/mdv $DATA/grib2/epoch $DATA/grib2/epoch_records $DATA/output
+
+# This checks the return code of the previous command and exits if it's anything other than zero
+#export err=$?; err_chk
+
+#setup input names and directories
+
+################################################
+# EPOCH uses these to find input data and parse date/time/forecast info from the input file name
+
+# this is the naming convention we use in RAL
+
+export CMCE_MODEL_DIR=${COMINcmce}/cmce.${PDY}/${cyc}/pgrb2ap5
+export CMCE_MODEL_NAME=${PDY}${cyc}_CMC_naefs_hr_latlon0p5x0p5_P${???}_0EE.grib2
+
+export GEFSA_MODEL_DIR=${COMINgefsa}/gefs.${PDY}/${cyc}/atmos/pgrb2ap5
+export GEFS_MODEL_NAME=gepEE.t${cyc}z.pgrb2a.0p5.f???
+
+export GEFSB_MODEL_DIR=${COMINgefsb}/gefs.${PDY}/${cyc}/atmos/pgrb2bp5
+export GEFS_MODEL_NAME=gepEE.t${cyc}z.pgrb2b.0p5.f???
+
+export GFS_MODEL_DIR=${COMINgfs}/gfs.${PDY}/${cyc}/atmos
+export GFSB_MODEL_DIR=${COMINgfs}/gfs.${PDY}/${cyc}/atmos
+export GFS_MODEL_NAME=gfs.t${cyc}z.pgrb2.0p25.f???
+
+################################################
+# setup output names and directories
+
+#export initial_output_file=${DATA}/grib2/epoch/${PDY}/${PDY}_${cyc}* #0000.grb2
+export initial_CCT30_output_dir="${DATA}/grib2/model/epochCCT_Opt30/${PDY}"
+export initial_CCT35_output_dir="${DATA}/grib2/model/epochCCT_Opt35/${PDY}"
+export initial_CCT40_output_dir="${DATA}/grib2/model/epochCCT_Opt40/${PDY}"
+export initial_Cal_output_dir="${DATA}/grib2/model/epochCal/${PDY}"
+echo $initial_Cal_output_dir/$PDY
+
+# what we are going to renaime the output file to
+#export output_file=${DATA}/output/epoch_grib/epoch.t${cyc}z.f0${fhr}.grb2
+export output_CCT30_dir="${DATA}/output/epochCCT30_grib"
+export output_CCT35_dir="${DATA}/output/epochCCT35_grib"
+export output_CCT40_dir="${DATA}/output/epochCCT40_grib"
+export output_Cal_dir="${DATA}/output/epochCal_grib"
+
+
+mkdir -p ${output_CCT30_dir}
+mkdir -p ${output_CCT35_dir}
+mkdir -p ${output_CCT40_dir}
+mkdir -p ${output_Cal_dir}
+
+
+# output file that comes directly from EPOCH
+
+#temporary MDV data
+export mdv_opt=${DATA}/mdv/model/epochOpt
+export mdv_cloudtop_opt=${DATA}/mdv/model/epochProbCloudTopOpt
+export cmorph23hrMdvDataDir=${DATA}/mdv/cmorph2_25/3hr
+
+
+# Execute ex-script
+
+
+#$HOMEepoch/ush/test.py
+#exit
+
+$HOMEepoch/scripts/exepoch.sh
+export err=$?; err_chk
+
+
+# Post successful completion message
+msg="JOB $job HAS COMPLETED NORMALLY."
+postmsg $jlogfile "$msg"
+echo
+echo $msg
+echo
+
+cat $pgmout >> pgmout.file
+
+# Print exec output
+if [ -e $pgmout ]; then
+  cat $pgmout
+fi
+
+# Remove temporary working directory
+if [ "${KEEPDATA^^}" != YES ]; then
+  rm -rf $DATA
+fi
+
+date

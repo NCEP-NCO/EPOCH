@@ -1,0 +1,98 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.ParamsConv
+ *
+ * This file contains the TDRP parameter definitions for params shared
+ * by apps that do convergence filtering....
+ */
+
+commentdef
+{
+  p_header = "Conv Params";
+  p_text =   "--Params shared by apps that do convergence filtering ----";
+};
+
+paramdef double 
+{
+  p_descr = "conv threshold";
+  p_help = "threshold in convergence values used in convergence UV reduction";
+  p_default = 1.0;
+} conv_thresh;
+
+// paramdef double 
+// {
+//   p_descr = "conv expansion";
+//   p_help = "expansion factor used in convergence UV reduction. Set to 0.0 for no convergence UV filtering";
+//   p_default = 2.0;
+// } conv_expansion_factor;
+
+typedef struct
+{
+  int npt;
+  double expansion;
+} fuzzy_expansion_t;
+
+paramdef struct fuzzy_expansion_t
+{
+  p_descr = "Fuzzy function for convergence expansion factors";
+  p_help = "Maps from npt in a run to the expansion factor";
+  p_default = {{5, 1.5}, {20, 1.0}};
+} npt_to_expansion[];
+
+paramdef string
+{
+  p_descr = "non-convergence filtered uv output names - optional";
+  p_help = "Convergence filtering leads to final output, this is prior to that";
+  p_default = {"", ""};
+} non_conv_filtered_uv_name[2];
+
+paramdef string
+{
+  p_descr = "convergence filtered uv output names - optional";
+  p_help = "Convergence filtering output, set to non empty if not final output";
+  p_default = {"", ""};
+} conv_filtered_uv_name[2];
+
+paramdef string
+{
+  p_descr = "inital_conv field";
+  p_help = "Initial Convergence field name for just before conv filt, empty for none";
+  p_default = "";
+} initial_conv_field;
+
+paramdef string
+{
+  p_descr = "post conv field";
+  p_help = "Convergence field name for right after conv filt, empty for none";
+  p_default = "";
+} post_conv_field;
+
+paramdef string
+{
+  p_descr = "final conv field";
+  p_help = "Convergence field name for very final output UV, empty for none. Typically set only if there are steps between convergence and final output";
+  p_default = "";
+} final_conv_field;
+
+paramdef string
+{
+  p_descr = "inital_du_dv field";
+  p_help = "Initial U/V partial derivative field name (before conv filt), empty for none";
+  p_default = {"",""};
+} initial_du_dv_field[2];
+
+paramdef string
+{
+  p_descr = "final_du_dv field";
+  p_help = "Final U/V partial derivative field name (after conv filt), empty for none";
+  p_default = {"",""};
+} final_du_dv_field[];
+
+

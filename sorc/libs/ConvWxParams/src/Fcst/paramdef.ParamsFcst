@@ -1,0 +1,103 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.ParamsFcst
+ *
+ * This file contains the TDRP parameter definitions for input/output data.
+ */
+
+commentdef
+{
+  p_header = "Fcst Params";
+  p_text =   "--------data values for input and output--------------------\n"
+             "--------projection file specification ----------------------";
+};
+
+typedef struct
+{
+  string name;
+  string description;
+  string url;
+  string field;
+  string units;
+  boolean remap;
+  int delta_minutes;
+} obs_data_t;
+  
+typedef struct
+{
+  string name;
+  string description;
+  string url;
+  string field;
+  string units;
+  double lt_hour0;
+  double lt_hour1;
+  double lt_delta_hours;
+  boolean remap;
+  int gt_delta_minutes;
+} fcst_data_t;
+  
+commentdef 
+{
+  p_header = "description of params";
+  p_text = 
+"Inputs/outputs share the same parameters:\n"
+"name = simple name for this data\n"
+"description = description of how its used in the app\n"
+"url = where data comes from or is written\n"
+"field = field name\n"
+"units = data units\n"
+"remap = TRUE if grid should be remapped to the ConvWx projection for read\n"
+"delta_minutes = minutes between obs data\n"
+"lt_hour0 = hour of 0th lead time\n"
+"lt_hour1 = hour of last lead time\n"
+"lt_delta_hours = hours between lead times\n";
+}
+
+paramdef struct obs_data_t
+{
+  p_descr = "input obs data";
+  p_help = "observation data input";
+  p_default = {};
+} obs_input[];
+
+paramdef struct fcst_data_t
+{
+  p_descr = "input fcst data";
+  p_help = "forecast data input";
+  p_default = {};
+} fcst_input[];
+
+paramdef struct obs_data_t
+{
+  p_descr = "output obs data";
+  p_help = "observation data output";
+  p_default = {};
+} obs_output[];
+
+paramdef struct fcst_data_t
+{
+  p_descr = "output fcst data";
+  p_help = "forecast data output";
+  p_default = {};
+} fcst_output[];
+
+paramdef string
+{
+  p_descr = "projection params";
+  p_help = "params with projection information";
+  p_default = "ConvWx_projection.params";
+} projection_param_file;
+
+commentdef
+{
+  p_header = "End of Fcst Params";
+  p_text = "";
+};

@@ -1,0 +1,109 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.ParamsPc
+ *
+ * This file contains the TDRP parameter definitions for params shared
+ * by the apps NiwotPC, NiwotLpc and NiwotFixedPC
+ */
+
+commentdef
+{
+  p_header = "Pc Compute Params";
+  p_text =   "--------Params used in computing phase correction vectors ---";
+};
+
+typedef struct
+{
+  string input_v_name;
+  string output_u_name;
+  string output_v_name;
+} uv_t;
+
+paramdef struct uv_t
+{
+  p_descr = "PC input - required";
+  p_help = 
+    "input_v_name = name of field in input data (U is in fcst_in spec)\n"
+    "output_u_name = non-empty to output this data\n"
+    "output_v_name = non-empty to output this data\n";
+  p_default = {"V", "", ""};
+} pc;
+
+paramdef string
+{
+  p_descr = "Output phase correction names";
+  p_help = "the phase correction vectors that were used";
+  p_default = {"U", "V"};
+} output_pc_uv_name[2];
+
+paramdef double
+{
+  p_descr = "minutes to wait when triggering is REALTIME";
+  p_help = "maximum number of minutes to wait for model data when triggering is REALTIME";
+  p_default = 5.0;
+} real_time_wait_max_minutes;
+
+paramdef double
+{
+  p_descr = "sleep interval while waiting for REALTIME triggering";
+  p_help = "minutes";
+  p_default = 0.5;
+} real_time_wait_sleep_minutes;
+
+paramdef string
+{
+  p_descr = "field name for latency adjusted data in output";
+  p_help = "if empty string, there is none";
+  p_default = "";
+} latency_adjusted_field_name;
+
+paramdef string
+{
+  p_descr = "field name for non-verified phase correction data in output";
+  p_help = "if empty string, no non-verified p.c. output";
+  p_default = "";
+} non_verified_pc_name;
+
+paramdef int 
+{ 
+  p_help = "gap fill ngridpoints x and y";
+  p_default = {3,3};
+} gap_fill[2];
+
+paramdef boolean
+{
+  p_help = "true to do the 'high' smoothing algorithm, false to do regular smoothing,  using the parameter smooth";
+  p_default = TRUE;
+} use_high_smooth;
+
+paramdef int 
+{ 
+  p_help = "smoothing ngridpoints x and y";
+  p_default = {3,3};
+} smooth[2];
+
+paramdef boolean
+{ 
+  p_help = "smoothing flag..smooth only where U&V non-zero";
+  p_default = FALSE;
+} smooth_where_corrected;
+
+paramdef double
+{ 
+  p_help = "zero_resolution, U/V data in the range -zero_resolution  to +zero_resulution is collapsed to 0.0";
+  p_default = 0.05;
+} zero_resolution;
+
+commentdef
+{
+  p_header = "End of Pc Compute Params";
+  p_text =   "";
+};
+

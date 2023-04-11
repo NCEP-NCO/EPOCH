@@ -1,0 +1,187 @@
+commentdef {
+  p_header = "PbarCompute";
+  p_text = "This program reads Ensemble model data and computes 'pbar' at a configured set of thresholds within a set of tiles, and writes results to SPDB.  Pbars are done for a precip field at precip thresholds, and also for a cloudtops field conditioned on both the precip field and the cloudtop field.  The precip field is field 1, the cloud top field is field 2.  A third field, typically CAPE, can optionally be used as well with a fixed threshold, to constrain the pbar values";
+}
+
+paramdef string
+{
+  p_default = "Tiling.params";
+  p_help = "Parameter file with tiling information";
+} tilingParamFile;
+
+paramdef string
+{
+  p_default = {"gep01","gep02","gep03","gep04","gep05","gep06","gep07","gep08","gep09","gep10",
+               "gep11","gep12","gep13","gep14","gep15","gep16","gep17","gep18","gep19","gep20"};	
+} ensembleMembers[];	
+
+paramdef double
+{
+  p_descr = "maximum age hours";
+  p_help = "Maximum age in real time of data compared to current real time in order to use the data (hours)";
+  p_default = 24.0;
+} maxAgeHours;
+
+paramdef double
+{
+  p_descr = "triggering feedback minutes";
+  p_help = "Triggering mechanism will return from each URL after this number of minutes to tell the handler there has been no new
+ input. Set this fairly small to speed up detection of timeout and disable situations.";
+  p_default = 1.0;
+} triggerFeedbackMinutes;
+
+paramdef double
+{
+  p_descr = "URL timout minutes";
+  p_help = "If a URL has produced data at a gen time, but no new lead times trigger, it has 'timed out'.  This parameter tells ho
+w long to wait until declaring a timeout.  It can be fairly big if this is a rare event";
+  p_default = 60.0;
+} urlTimeoutMinutes;
+
+paramdef double
+{
+  p_descr = "URL disable minutes";
+  p_help = "If a URL has not produced data at a gen time, but other URls have, the URL is declared 'disabled' if this many minute
+s have elapsed between the first data at the gen time from any URL, and the current real time";
+  p_default = 60.0;
+} urlDisableMinutes;
+
+paramdef string
+{
+  p_help = "Pbar Spdb , output of this app";
+  p_default = "spdbp:://localhost::EpochOps/CMCE/pbar";
+} pbarSpdb;
+
+paramdef double 
+{
+  p_help = "Minimum threshold to try, field1 (precip)";
+  p_default = 1.0;
+} threshMin1;
+
+paramdef double
+{
+  p_help = "Maximum threshold to try, field1 (precip)";
+  p_default = 6.0;
+} threshMax1;
+
+paramdef double
+{
+  p_help = "Step between thresholds when trying multiple, field1 (precip)";
+  p_default = 0.25;
+} threshDelta1;
+
+typedef enum {
+  GREATER_THAN_OR_EQUAL,
+  LESS_THAN_OR_EQUAL
+} Comparison_t;
+
+paramdef enum Comparison_t {
+  p_default = GREATER_THAN_OR_EQUAL;
+  p_descr = "comparison choice";
+} thresholdedComparison1;
+
+paramdef string
+{
+  p_help = "Input threshold data field name in ensemble model data, goes into SPDB, field1 (precip)";
+  p_default = "APCP3Hr";
+} inputThreshField1;
+
+paramdef double
+{
+  p_help = "Input thresholded field data default coldstart threshold field1 (precip)";
+  p_default = 2.0;
+} threshFieldColdstartThreshold1;
+
+paramdef double 
+{
+  p_help = "Minimum threshold to try, field2 (cloudtop)";
+  p_default = 170.0;
+} threshMin2;
+
+paramdef double
+{
+  p_help = "Maximum threshold to try, field2 (cloudtop)";
+  p_default = 350.0;
+} threshMax2;
+
+paramdef double
+{
+  p_help = "Step between thresholds when trying multiple, field2 (cloudtop)";
+  p_default = 10;
+} threshDelta2;
+
+paramdef enum Comparison_t {
+  p_default = LESS_THAN_OR_EQUAL;
+  p_descr = "comparison choice";
+} thresholdedComparison2;
+
+paramdef string
+{
+  p_help = "Input threshold data field name in ensemble model data, goes into SPDB, field2 (cloudtops)";
+  p_default = "ULWRF3Hr";
+} inputThreshField2;
+
+paramdef double
+{
+  p_help = "Input thresholded field data default coldstart threshold, field2 (cloudtops)";
+  p_default = 200.0;
+} threshFieldColdstartThreshold2;
+
+paramdef boolean
+{
+  p_help = "Use an additional input along with a fixed threshold for field1 (precip)";
+  p_default = FALSE;
+} hasFixedField1;
+
+paramdef string
+{
+  p_help = "Input fixed field in model data, goes into SPDB as a fixed value, if hasFixedField1, ignored otherwise";
+  p_default = "CAPE";
+} inputFixedField1;
+
+paramdef enum Comparison_t {
+  p_default = GREATER_THAN_OR_EQUAL;
+  p_descr = "comparison choice for fixed field, ignored if hasFixedField1 is FALSE";
+} fixedFieldComparison1;
+
+paramdef double
+{
+  p_help = "The fixed field threshold to use, if hasFixedField1 is true";
+  p_default = 200.0;
+} fixedThreshold1;
+
+
+paramdef boolean
+{
+  p_help = "Use a input along with a fixed threshold for field2 (cloudtops)";
+  p_default = FALSE;
+} hasFixedField2;
+
+paramdef string
+{
+  p_help = "Input fixed field in model data, goes into SPDB as a fixed value, if hasFixedField2, ignored otherwise";
+  p_default = "CAPE";
+} inputFixedField2;
+
+paramdef enum Comparison_t {
+  p_default = GREATER_THAN_OR_EQUAL;
+  p_descr = "comparison choice for fixed field, ignored if hasFixedField2 is FALSE";
+} fixedFieldComparison2;
+
+paramdef double
+{
+  p_help = "The fixed field threshold to use, if hasFixedField2 is true";
+  p_default = 200.0;
+} fixedThreshold2;
+
+paramdef int
+{
+  p_default = 0;
+  p_help = "Number of threads on ensemble member, 0 or 1 for no threading";
+} num_threads;
+
+paramdef boolean
+{
+  p_default = FALSE;
+  p_help = "Set true to see more debugging of internal state";
+} debug_state;

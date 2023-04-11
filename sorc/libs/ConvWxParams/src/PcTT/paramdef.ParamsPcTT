@@ -1,0 +1,35 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.ParamsPc
+ *
+ * This file contains the TDRP parameter definitions for params used in
+ * applying phase correction
+ */
+
+commentdef
+{
+  p_header = "Pc Apply Data Params";
+  p_text =   "--------Params used to set data when applying phase correction ---- ";
+;
+};
+
+paramdef string
+{
+  p_descr = "PC input - required";
+  p_help = "input_v_name = name of field in input data (U is in fcst_in spec)";
+  p_default = "V";
+} input_pc_v_name;
+
+commentdef
+{
+  p_header = "End of Pc Apply Data Params";
+  p_text =   "";
+};
+

@@ -1,0 +1,2 @@
+To delete all binaries for a clean build run util.sh
+To compile run ./build_transfer.sh

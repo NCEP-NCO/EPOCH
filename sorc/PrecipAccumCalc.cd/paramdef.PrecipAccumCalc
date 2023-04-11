@@ -1,0 +1,111 @@
+commentdef {
+  p_header = "PrecipAccumCalc ";
+
+}
+
+commentdef {
+  p_header = "Reads model mdv input with 3 hr accmulations at alternating lead times and produces 3hr accumulations at every lead time";
+}
+
+typedef enum
+{
+  REALTIME,
+  ARCHIVE,
+} run_mode_t;
+
+paramdef enum run_mode_t
+{
+  p_default = REALTIME;
+  p_help = "";
+}runMode;
+
+typedef enum
+{
+  INT8,
+  INT16,
+  FLOAT32
+} ouput_data_type_t;
+
+paramdef enum  ouput_data_type_t
+{
+   p_default = FLOAT32;
+   p_help = "";
+
+}outputDataType;
+
+
+paramdef string
+{
+  p_default = {"gep01","gep02","gep03","gep04","gep05","gep06","gep07","gep08","gep09","gep10",
+               "gep11","gep12","gep13","gep14","gep15","gep16","gep17","gep18","gep19","gep20"};
+} ensembleMembers[];
+
+paramdef string {
+p_descr = "3 hour accum input short field name. (output has same name)";
+p_default = "APCP3Hr";
+} hr3AccumName;
+
+paramdef string {
+p_descr = "3 hour accumulation string to be appended to output url.";
+p_default = "3hrAccum";
+} hr3AccumOutputDirTail;
+
+paramdef string {
+p_descr = "6 hour accum input field name. (not output)";  
+p_default = "APCP6Hr";
+} hr6AccumName;
+
+paramdef string {
+p_descr = "3 hour ULWRF average field name, input (output has same name).";
+p_help =  "2*ULWRF6Hr(lead i) -ULWRF3Hr (lead i-1 ) will be calculated to form ULWRF3Hr (lead i) with output field name the same as the input 3hr field ";
+p_default = {"ULWRF3Hr"};
+} hr3UlwrfName;
+
+paramdef string {
+p_descr = "6 hour ULWRF average field name, input."; 
+p_help =  "2*ULWRF6Hr(lead i) - ULWRF3Hr (lead i-1) will be calculated to form ULWRF3Hr (lead i) with output field name  hr3UlwrfName as above ";
+p_default = {"ULWRF6Hr"};
+} hr6UlwrfName;
+
+paramdef string {
+p_descr = "Other data fields in the mdv file which will be appended to any new file created";
+p_default ={};
+} extraDataFields[];
+
+paramdef boolean {
+p_descr = "Option to convert negative numbers great than -1 to zero after subtraction of fields";
+p_default = true;
+}forceAccumNonNegative;
+
+paramdef int {
+p_descr = "Number of threads processing the data";
+p_default = 1;
+} numThreads;
+
+typedef struct
+{
+  string shortName;
+  string longName;
+} Mdv_name_t;
+
+paramdef struct Mdv_name_t
+{
+  p_descr = "mapping of MDV field names from short to long, 3 hour averages";
+  p_help = "When using server, long names are needed to do the reading";
+  p_default = {
+    {"APCP3Hr", "Total precipitation"},
+    {"CAPE", "Convective Available Potential Energy"},
+    {"ULWRF3Hr", "Unknown local use paramater number"}
+  };    
+} mdv_3hr_names[];
+
+paramdef struct Mdv_name_t
+{
+  p_descr = "mapping of MDV field names from short to long, 6 hour averages";
+  p_help = "When using server, long names are needed to do the reading";
+  p_default = {
+    {"APCP6Hr", "Total precipitation"},
+    {"CAPE", "Convective Available Potential Energy"},
+    {"ULWRF6Hr", "Unknown local use paramater number"}
+  };    
+} mdv_6hr_names[];

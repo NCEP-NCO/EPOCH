@@ -1,0 +1,138 @@
+/**********************************************************************
+ * TDRP params for ThresholdDatabaseParams
+ **********************************************************************/
+
+//======================================================================
+//
+// Thresholds Database Parms.
+//
+// --------Params for a thresholds database ---- .
+//
+//======================================================================
+ 
+///////////// fromDatabase ////////////////////////////
+//
+// TRUE if the thresholds come from a database, FALSE if this is data 
+//   with a fixed threshold.
+//
+// Type: boolean
+//
+
+fromDatabase = TRUE;
+
+///////////// fieldName ///////////////////////////////
+//
+// Database and Model data field name.
+//
+// Type: string
+//
+
+fieldName = "APCP3Hr";
+
+///////////// compare /////////////////////////////////
+//
+// Type of comparison to see if data passes test.
+//
+// Type: enum
+// Options:
+//     LE
+//     EQ
+//     GE
+//
+
+compare = GE;
+
+///////////// coldstartThresh /////////////////////////
+//
+// threshold to use when none in database (fromDatabase=true) or the 
+//   fixed threshold (fromDatabase=false).
+//
+// Type: double
+//
+
+coldstartThresh = 2.0;
+
+//======================================================================
+//
+// Params for when fromDatabase=TRUE.
+//
+// --------The remaining params are used only when 
+//   fromDatabase=TRUE-----------.
+//
+//======================================================================
+ 
+///////////// databaseUrl /////////////////////////////
+//
+// location of thresholds database.
+//
+// Type: string
+//
+
+databaseUrl = "spdbp:://localhost::$(THRESH_HIST_APCP_CMCE)";
+
+///////////// isOutputObar ////////////////////////////
+//
+// TRUE if this database is the one form which obar thresholds are used 
+//   to create probabiliites (only one field can have this set to TRUE).
+//
+// Type: boolean
+//
+
+isOutputObar = FALSE;
+
+///////////// doOutputThresholdsGrid //////////////////
+//
+// TRUE to output the thresholds grids along with probabilities for this 
+//   field.
+//
+// Type: boolean
+//
+
+doOutputThresholdsGrid = TRUE;
+
+///////////// numFieldsWithOutsideThresh //////////////
+//
+// Number of fields total that have an outside threshold.  The outside 
+//   thresholds are used ONLY when isOutputObar is true, ie for only one 
+//   field. At most 4 fields are allowed in the design.
+//
+// Type: int
+//
+
+numFieldsWithOutsideThresh = 4;
+
+///////////// obsSpec /////////////////////////////////
+//
+// The specs for each obar threshold expected in inputs
+// obsThresh = the obs threshold expected in the database
+// griddedFieldName = name of probabiity field (used only when 
+//   isOutputObar is true)field1 = first field with an outside threshold
+// outsideThresh1 = the outside threshold for the first field
+// field2 = second field with an outside threshold
+// outsideThresh2 = the outside threshold for the second field
+// field3 = third field with an outside threshold
+// outsideThresh3 = the outside threshold for the third field
+// field4 = fourth field with an outside threshold
+// outsideThresh4 = the outside threshold for the fourth field.
+//
+// Type: struct
+//   typedef struct {
+//      double obsThresh;
+//      string griddedFieldName;
+//      string field1;
+//      double outsideThresh1;
+//      string field2;
+//      double outsideThresh2;
+//      string field3;
+//      double outsideThresh3;
+//      string field4;
+//      double outsideThresh4;
+//   }
+//
+// 1D array - variable length.
+//
+
+obsSpec = {
+  { 2.0, "ProbConvWx", "CAPE", 300, "APCP3Hr", 1, "ULWRF3Hr", 225, "TMP", 280}
+};
+

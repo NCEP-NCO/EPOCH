@@ -1,0 +1,75 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.Driver
+ *
+ * This file contains the TDRP parameter definitions for ConvWx Drivers (apps)
+ */
+
+commentdef
+{
+  p_header = "Main Params";
+  p_text =  "--------Debug file -----------------------------------------\n"
+	    "--------PMU setting ----------------------------------------\n"
+	    "--------Triggering settings --------------------------------";
+};
+
+paramdef string
+{
+  p_descr = "debug file";
+  p_help = "File with debug settings.";
+  p_default = "ConvWx_debug.params";
+} debug_file;
+
+/***********************************************************************
+ * Process parameters
+ */
+
+paramdef string
+{
+  p_descr = "Process instance.";
+  p_help = "Used for registration with procmap.";
+  p_default = "default";
+} instance;
+
+paramdef double
+{
+  p_descr = "Pmu max minutes before restart";
+  p_help = "Used for registration with procmap.";
+  p_default = 5.0;
+} procmap_interval_minutes;
+
+commentdef
+{ p_header = "Triggering";
+  p_text = 
+"Triggering is for obs data having a known gen time frequency. The triggering will be for this full set of gen times unless the subset param below is activated.\n"
+"Triggering assumes REALTIME inputs unless the command line has args:\n"
+"       -interval yyyymmddhhmmss yyyymmddhhmmss\n"
+"in which case ARCHIVE mode triggering is assumed for existing data in the range specified";
+};
+
+paramdef string
+{
+  p_descr = "Triggering URL";
+  p_default = "mdvp:://localhost::mdv/ruc";
+} trigger_url;
+
+paramdef int
+{
+  p_descr = "trigger frequency subset";
+  p_help =  "Subset of gen time minutes for which to trigger results, empty to trigger all gen times that come in at the url. Must be a subset of the full set of triggering minutes. This won't work for data that is irregularly time spaced and should be kept empty";
+  p_default = {};
+} trigger_gen_minutes_subset[];
+
+commentdef
+{
+  p_header = "End of Main Params";
+  p_text =   "";
+};
+

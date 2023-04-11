@@ -1,0 +1,8 @@
+MY_CPPCHECKFLAGS = -E Params.cc -E Params.hh -E Parms$(TARGET_FILE)IO.hh -E Parms$(TARGET_FILE)IO.cc -AddStyleFAA -exclude-rules=4.16
+
+LOC_INC_DIR = .
+
+
+
+
+

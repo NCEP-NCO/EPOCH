@@ -1,0 +1,193 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:28 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************************
+ * TDRP params for ParamsProjection
+ **********************************************************************/
+
+//======================================================================
+//
+// Projection Parms.
+//
+// --------Params that give the projection---------------------
+//
+//======================================================================
+ 
+///////////// projection //////////////////////////////
+//
+// type of projection.
+//
+// Type: enum
+// Options:
+//     REMAP_FLAT
+//     REMAP_LATLON
+//     REMAP_LAMBERT_CONFORMAL2
+//
+
+projection = REMAP_LATLON;
+
+///////////// nx //////////////////////////////////////
+//
+// nx.
+// grid nx.
+// Type: int
+//
+
+nx = 720;
+
+///////////// ny //////////////////////////////////////
+//
+// ny.
+// grid ny.
+// Type: int
+//
+
+ny = 241;
+
+///////////// nz //////////////////////////////////////
+//
+// nz.
+// grid nz.
+// Type: int
+//
+
+nz = 1;
+
+///////////// dx //////////////////////////////////////
+//
+// dx.
+// grid dx (km).
+// Type: double
+//
+
+dx = 0.5;
+
+///////////// dy //////////////////////////////////////
+//
+// dy.
+// grid dy (km).
+// Type: double
+//
+
+dy = 0.5;
+
+///////////// dz //////////////////////////////////////
+//
+// dz.
+// grid dz (km).
+// Type: double
+//
+
+dz = 0;
+
+///////////// x0 //////////////////////////////////////
+//
+// x0.
+// grid minimum x (km).
+// Type: double
+//
+
+x0 = 0;
+
+///////////// y0 //////////////////////////////////////
+//
+// y0.
+// grid minimum y (km).
+// Type: double
+//
+
+y0 = -60;
+
+///////////// z0 //////////////////////////////////////
+//
+// z0.
+// grid minimum z (km).
+// Type: double
+//
+
+z0 = 0.0;
+
+///////////// origin_lat //////////////////////////////
+//
+// origin_lat.
+// latitude of origin.
+// Type: double
+//
+
+origin_lat = -90;
+
+///////////// origin_lon //////////////////////////////
+//
+// origin_longitude.
+// longitude of origin.
+// Type: double
+//
+
+origin_lon =  0;
+
+///////////// offset_origin_lat ///////////////////////
+//
+// offset_origin_lat.
+// latitude of offset origin.
+// Type: double
+//
+
+offset_origin_lat = -90;
+
+///////////// offset_origin_lon ///////////////////////
+//
+// offset_origin_longitude.
+// longitude of offset origin.
+// Type: double
+//
+
+offset_origin_lon = 0;
+
+///////////// rotation ////////////////////////////////
+//
+// rotation.
+// degrees.
+// Type: double
+//
+
+rotation = 0;
+
+///////////// lat1 ////////////////////////////////////
+//
+// lat1.
+// lambert conformal lat1 value.
+// Type: double
+//
+
+lat1 = 0;
+
+///////////// lat2 ////////////////////////////////////
+//
+// lat2.
+// lambert conformal lat2 value.
+// Type: double
+//
+
+lat2 = 0;
+
+///////////// earth_radius_km /////////////////////////
+//
+// earth radius km.
+// Radius of the earth, kilometers.
+//
+// Type: double
+//
+
+earth_radius_km = 6371.2290;
+
+//======================================================================
+//
+// End of Projection Params.
+//
+//======================================================================
+ 

@@ -1,0 +1,59 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.Tiling
+ *
+ * This file contains the TDRP parameter definitions for params shared
+ * by apps that do tiling
+ */
+
+commentdef
+{
+  p_header = "Tiling Params";
+  p_text =   "--Params that are used to specify Tiling--";
+};
+
+
+paramdef boolean
+{
+  p_help = "Tiling yes or no.  If FALSE, tiling is not done, it is the full grid";
+  p_default = FALSE;
+} do_tiling;
+
+paramdef int
+{
+  p_help = "Tile box size x and y (number of gridpoints)";
+  p_default = {100, 100};
+} tile_npt[2];
+
+paramdef int
+{
+  p_help = "Tile box overlap x and y (number of gridpoints)";
+  p_default = {50, 50};
+} tile_overlap_npt[2];
+
+paramdef boolean
+{
+  p_help = "Mother tile as a subset, yes or no. TRUE for yes";
+  p_default = FALSE;
+} mother_tile_is_subset;
+
+paramdef int
+{
+  p_help = "Lower left mothertile grid point index, when mother_tile_is_subset";
+  p_default = {0, 0};
+} mother_tile_lower_left_index[2];
+
+paramdef int
+{
+  p_help = "Upper right mothertile grid point index, when mother_tile_is_subset";
+  p_default = {0, 0};
+} mother_tile_upper_right_index[2];
+
+

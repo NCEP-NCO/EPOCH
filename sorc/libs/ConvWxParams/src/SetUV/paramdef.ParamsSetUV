@@ -1,0 +1,226 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.ParamsSetUV
+ *
+ * This file contains the TDRP parameter definitions for params shared
+ * by apps that set UV using the Ncar Phase Correction technique
+ */
+
+commentdef
+{
+  p_header = "SetUV Params";
+  p_text =   "--Params that are used to set phase correction vectors using the Ncar phase correction algorithm ";
+};
+
+typedef struct {
+  string name;
+  double threshold;
+  double fractional_area_data_threshold;
+  double alpha;
+  double variance;
+} data_t;
+
+paramdef struct data_t
+{
+  p_descr = "data. any number of data sources are used";
+} data[];
+
+commentdef {
+  p_header = "Alg Description";
+  p_text = "Given a forecast F and a verifying field V we do this:\n"
+"1. Smooth F by taking average in a box\n"
+"       the box is forecast_input_smooth points on a side\n"
+"1. Smooth V by taking average in a box\n"
+"       the box is verif_input_smooth points on a side\n"
+"2. Convert F and V to low res from high res\n"
+"       there are low_res_ngridpts high res points per lowres point\n"
+"3. Compute p.c. shift (all params are in units of low res number of\n"
+"                   gridpoints unless otherwise indicated)\n"
+"   a. compute p.c. in each volume box\n"
+"      volume boxes are volume_size[]  and overlap by volume_overlap[]\n"
+"\n"
+"      offsets in x and y are:\n"
+"          -max_phase_shift*phase_shift_res_npt,\n"
+"          (-max_phase_shift+1)*phase_shift_res_npt,\n"
+"          ...\n"
+"          +max_phase_shift*phase_shift_res_npt\n"
+"\n"
+"      i. test phase correction for each offset x,y\n"
+"         compute a score for this shift using ALL point in box\n"
+"      ii. get best such score\n"
+"      iii. for all phase shifts where score was <= good_scaling*best\n"
+"           refine the score:\n"
+"            look at shifts near this one and choose if better\n"
+"              refinement offsets in x and y are:\n"
+"                -refine_max_phase_shift*refine_phase_shift_res_npt,\n"
+"               (-refine_max_phase_shift+1)*refine_phase_shift_res_npt,\n"
+"               ...\n"
+"               +refine_max_phase_shift*refine_phase_shift_res_npt\n"
+"\n"
+"      iv. find smallest shift with a good score=\n"
+"          'good_score' means score <= good_dist_scaling*best\n"
+"   b. Merge scores from all boxes taking average within overlap\n"
+"   c. Smooth these motion vectors\n"
+"         smooth using low_res_motion_smooth for each in order\n"
+"   c. interpolate back to full grid using bilinear interpolation\n"
+"   d. smooth the high res motion vectors\n"
+"         smooth using high_res_motion_smooth for each in order\n"
+"4. Use motion to shift the non-smoothed original forecast\n"
+"5. Fill gaps in the shifted forecast by smoothing\n"
+"      param = high_res_gap_fill\n"
+"6. Smooth the resulting forecast\n"
+"     smooth using high_res_output_fcst_smooth for each in order\n";
+}
+
+paramdef int
+{
+  p_descr = "smoothing of input fcst";
+  p_help = "smoothing distance (high res number of gridpoints) for input forecast";
+  p_default = 9;
+} forecast_input_smooth;
+
+paramdef int
+{
+  p_descr = "smoothing of input verif";
+  p_help = "smoothing distance (high res number of gridpoints) for input verification grid";
+  p_default = 9;
+} verif_input_smooth;
+
+paramdef int
+{
+  p_descr = "low res (ngridpoints)";
+  p_help = "the number of gridpoints per low resolution gridpoint";
+  p_default = 1;
+} low_res_ngridpts;
+
+paramdef int
+{
+  p_descr = "volume size (low res ngridpoints)";
+  p_help = "boxes (volumes) are evaluated individually. This is the x,y box length (low res number of gridpoints)";
+  p_default = {300, 300};
+} volume_size[2];
+
+paramdef int
+{
+  p_descr = "volume overlap (low res ngridpoints)";
+  p_help = "overlap in volumes x and y (low res number of gridpoints)";
+  p_default = {150, 150};
+} volume_overlap[2];
+
+paramdef int
+{
+  p_descr = "phase shift resolution";
+  p_help = "Resolution of phase shift tests (units=low res number of gridpoints)";
+  p_default = 60;
+} phase_shift_res_npt;
+
+paramdef int
+{
+  p_descr = "max phase shift npt";
+  p_help = "phase shifts are done at 0 up to +/- max_phase_shift*phase_shift_res_npt, in increments of phase_shift_res_npt";
+  p_default = 240;
+} max_phase_shift;
+
+paramdef int
+{
+  p_descr = "phase shift resolution (refinement)";
+  p_help = "Resolution of phase shift tests (units=low res number of gridpoints) during refinement phase";
+  p_default = 60;
+} refine_phase_shift_res_npt;
+
+paramdef int
+{
+  p_descr = "max phase shift npt (refinement)";
+  p_help = "phase shifts are done at 0 up to +/- refine_max_phase_shift*refine_phase_shift_res_npt, in increments of refine_phase_shift_res_npt";
+  p_default = 240;
+} refine_max_phase_shift;
+
+paramdef int
+{
+  p_descr = "low res motion smoothing";
+  p_help = "low resolution motion is smoothed some number of times at these npt values";
+  p_default = {45, 45, 45};
+} low_res_motion_smooth[];
+
+paramdef int
+{
+  p_descr = "high res motion smoothing";
+  p_help = "high resolution motion is smoothed some number of times at these npt values";
+  p_default = {9, 9, 9};
+} high_res_motion_smooth[];
+
+paramdef int
+{
+  p_descr = "high res gap filling";
+  p_help = "high resolution forecasts gaps filled by smoothing (npt)";
+  p_default = 9;
+} high_res_gap_fill;
+
+paramdef int
+{
+  p_descr = "high res output forecast smoothing";
+  p_help = "high resolution forecasts smoothed (npt)";
+  p_default = {9};
+} high_res_output_fcst_smooth[];
+
+paramdef boolean
+{
+  p_descr ="exclude_zero_from_smoothing";
+  p_help = "TRUE to not include values of 0 in smoothing, instead they are treated like missing data, FALSE to include 0 in the smoothing. Setting this to TRUE will cause boxlike UV fields that are the size of the volumes";
+  p_default = FALSE;
+} exclude_zero_from_smoothing;
+
+paramdef int 
+{
+  p_descr ="high res max filter expansion";
+  p_help = "after smoothing, at each point the U/V value at the point is set to the point within high_res_max_expand_npt of the point at which |U,V| is max. If set to 0, no such max filter";
+  p_default = 0;
+} high_res_max_expand_npt;
+
+paramdef double
+{
+  p_descr = "good scale";
+  p_help = "When computing refinements, a point is refined if score is good enough if score <= good_scaling*best_score";
+  p_default = 2.0;
+} good_scaling;
+
+paramdef double
+{
+  p_descr = "good distance scale";
+  p_help = "When minimizing phase correction distance, score is good enough if score <= good_dist_scaling*best_score";
+  p_default = 2.0;
+} good_dist_scaling;
+
+typedef struct
+{
+  double distance;
+  double value;
+} fuzzy_f;
+
+paramdef struct fuzzy_f
+{
+  p_descr = "fuzzy function for grid edge computation";
+  p_help = "function that becomes small when you are close to the grid edge";
+} fuzzy_grid_distance[];
+
+paramdef double
+{
+  p_descr = "fractional area min percent";
+  p_help = "do not do phase correction in boxes where (npt>thresh)/npt is less than this percentage.";
+  p_default = 0.15;
+} fractional_area_min_pcnt; 
+
+paramdef double
+{
+  p_descr = "grid area min percent";
+  p_help = "do not do phase correction if the grids (verifying and forecast) do not both have (npt>thresh)/npt >= grid_area_min_pcnt";
+  p_default = 0.01;
+} grid_area_min_pcnt; 
+

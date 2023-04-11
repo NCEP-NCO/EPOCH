@@ -1,0 +1,70 @@
+/**********************************************************************
+ * TDRP params for ParamsTiling
+ **********************************************************************/
+
+//======================================================================
+//
+// Tiling Params.
+//
+// --Params that are used to specify Tiling--.
+//
+//======================================================================
+ 
+///////////// do_tiling ///////////////////////////////
+//
+// Tiling yes or no.  If FALSE, tiling is not done, it is the full grid.
+//
+// Type: boolean
+//
+
+do_tiling = TRUE;
+
+///////////// tile_npt ////////////////////////////////
+//
+// Tile box size x and y (number of gridpoints).
+//
+// Type: int
+// 1D array - fixed length - 2 elements.
+//
+
+tile_npt = { 40, 40 };
+
+///////////// tile_overlap_npt ////////////////////////
+//
+// Tile box overlap x and y (number of gridpoints).
+//
+// Type: int
+// 1D array - fixed length - 2 elements.
+//
+
+tile_overlap_npt = { 20, 20 };
+
+///////////// mother_tile_is_subset ///////////////////
+//
+// Mother tile as a subset, yes or no. TRUE for yes.
+//
+// Type: boolean
+//
+
+mother_tile_is_subset = TRUE;
+
+///////////// mother_tile_lower_left_index ////////////
+//
+// Lower left mothertile grid point index, when mother_tile_is_subset.
+//
+// Type: int
+// 1D array - fixed length - 2 elements.
+//
+
+mother_tile_lower_left_index = { 0, 80 };
+
+///////////// mother_tile_upper_right_index ///////////
+//
+// Upper right mothertile grid point index, when mother_tile_is_subset.
+//
+// Type: int
+// 1D array - fixed length - 2 elements.
+//
+
+mother_tile_upper_right_index = { 719, 160 };
+

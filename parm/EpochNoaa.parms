@@ -1,0 +1,154 @@
+#----------------------------------------------------------------------------
+[main]
+
+# number of days to look back for data relative to triggering model run time
+# for the other inputs that have not yet been detected and processed.
+# Can be set small if real time data flow is known to be reliable and close to real time
+# Should be set big enough to allow for latency in input data relative to model runs
+maxLookbackDays = 3
+
+# number of days to keep model data 'pbars' in state waiting for enough obs data to
+# create thresholds.  If this is smaller than the maximum lead time hours, the
+# maximum lead hours is used instead
+maxModelLookbackDays = 10
+
+# number of days to look ahead for data relative to triggering model run time
+# Set big enough to allow for latency in model runs relative to other input data
+maxLookaheadDays = 0
+
+# expected number of model lead times (CMCE and GEFS)
+maxEnsembleLeadHours = 57
+
+# 0 for minimal debug, 2 for maximum debug, 1 for intermediate debug
+debugLevel = 2
+
+# 1 to force showing all the commands no matter what the debug level, 0 to not do that
+debugCmd = 1
+
+# 0 to not create Grib2toMdv log files, 1 to create them (there are a lot of Grib2toMdv log files)
+logGrib2ToMdv = 1
+
+# set to 1 to create $DATA with each run and delete it at the end
+# set to 0 to keep $DATA
+do_delete_temp_data_dir = 0
+
+# set to 1 to delete $WORKSPACE at the end of each successful run
+# set to 0 to keep $WORKSPACE
+do_delete_workspace = 1
+
+# set to 1 to copy into $WORKSPACE from $COMOUT for previous days at the beginning of each run
+# set to 0 to assume $WORKSPACE is persistent so don't need to do that, typically if do_delete_workspace = 0
+do_copy_into_workspace = 1
+
+#----------------------------------------------------------------------------
+[globcomp]
+# Globcomp LIR data files: /d1/fieldData/EpochOps/raw/gmgsiAws/LIR/GLOBCOMPLIR_nc.YYYYMMDDHH
+# /lfs/h1/ops/dev/dcom/20220803/globcomp_nc/GLOBCOMPLIR_nc.2022080323
+#
+
+#
+# Set to 1 for WCOSS access mode, 0 for NCAR access mode
+#
+globcompAccessModeWcoss = 1
+
+# the file name before the YYYYMMDD
+fileNamingLIR = GLOBCOMPLIR_nc.
+
+# the path to files
+#globcompDataPathLIR = /d1/fieldData/EpochOps/raw/gmgsiAws/LIR
+#globcompDataPathLIR = /lfs/h1/ops/dev/dcom/
+globcompDataPathLIR = $DCOMROOT
+
+# for a full file path, index to YYYYMMDD
+globcompLirYmdIndex = 21
+
+# for a full file path, index to HH
+globcompLirHourIndex = 65
+    
+#----------------------------------------------------------------------------
+[gfs]
+# this data comes in two inputs, regular (or 'a') and 'b', looks like this:
+# a:   /d1/fieldData/EpochOps/raw/GFS_0.25-pgrb2/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2.0p25.fLLL
+# b:   /d1/fieldData/EpochOps/raw/GFS_0.25-pgrb2b/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2b.0p25.fLLL
+#gfsPattern = /d1/fieldData/EpochOps/raw/GFS_0.25-pgrb2/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2.0p25.fLLL
+#gfsPatternb = /d1/fieldData/EpochOps/raw/GFS_0.25-pgrb2b/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2b.0p25.fLLL
+
+#gfsPattern = /lfs/h1/ops/prod/com/gfs/v16.3/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2.0p25.fLLL 
+#gfsPatternb = /lfs/h1/ops/prod/com/gfs/v16.3/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2b.0p25.fLLL
+
+#export gfsPattern=${COMINgfs}/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2.0p25.fLLL
+#export gfsPatternb=${COMINgfs}/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2b.0p25.fLLL
+
+
+# for a full file path, the index to YYYYMMDD
+gfsYmdIndex =35
+gfsbYmdIndex=35
+
+# for a full file path, the index to HH
+gfsHourIndex=44
+gfsbHourIndex=44
+
+# for a full file path, the index to LLL (lead hour)
+gfsLeadIndex=73
+gfsbLeadIndex=74
+
+# The expected LLL values 
+gfsModelLeadTimeHours =000 003 006 009 012
+
+#----------------------------------------------------------------------------
+[cmorph2]
+# The pattern has YYYYMMDD and HH in more than one place and has MM (start minute) and mm (end minute).
+# We use the start minute.  Data looks like this::
+# /d1/fieldData/EpochOps/raw/cmorph2_25/YYYYMMDD/CMORPH2_0.25deg-30min_SYYYYMMDDHHMM_EYYYYMMDDHHmm.RT.nc 
+# /lfs/h1/ops/dev/dcom/20220803/cmorph2/CMORPH2_0.25deg-30min_S202208030630_E202208030659.RT.nc
+
+#
+# Set to 1 for WCOSS access mode, 0 for NCAR access mode
+#
+cmorph2AccessModeWcoss = 1
+
+# path common to all cmorph2 data 
+#cmorph2Path = /d1/fieldData/EpochOps/raw/cmorph2_25
+#cmorph2Path = /lfs/h1/ops/dev/dcom
+#cmorph2Path = $DCOMROOT
+
+# the full pattern where lowercase 'mm' is the end minute
+#cmorph2Pattern = /d1/fieldData/EpochOps/raw/cmorph2_25/YYYYMMDD/CMORPH2_0.25deg-30min_SYYYYMMDDHHMM_EYYYYMMDDHHmm.RT.nc
+#cmorph2Pattern = $DCOMROOT/YYYYMMDD/cmorph2/CMORPH2_0.25deg-30min_SYYYYMMDDHHMM_EYYYYMMDDHHmm.RT.nc
+
+# for a full file path, index to YYYYMMDD
+cmorph2YmdIndex = 21
+
+# for a full file path, index to HH
+cmorph2HourIndex = 69
+
+# for a full file path, index to MM
+cmorph2MinuteIndex = 71
+
+# the number of minutes between cmorph2 data files
+cmorph2FrequencyMinutes = 30
+
+# the maximum latency of cmorph data before averaging incomplete datasets
+cmorph2MaxLatencyHours = 20
+
+# the delay in processing cmorph relative to model run times (hours)
+# not sure what this should be at NOAA
+cmorph2DelayHours = 13
+
+#----------------------------------------------------------------------------
+[cmce]
+# path is /d1/fieldData/EpochOps/raw/cmce/cmce.YYYYMMDD/HH/pgrb2ap5/cmc_gepEE.tHHz.pgrb2a.0p50.fLLL
+# /lfs/h1/ops/prod/com/naefs/v6.1/cmce.YYYYMMDD/HH/pgrb2ap5/cmc_gepEE.tHHz.pgrb2a.0p50.fLLL
+
+# the portion of the file name before the ensemble member EE
+#cmceDataPath3 = cmc_gep
+cmceDataPath3 = cmc_gep
+
+#----------------------------------------------------------------------------
+[gefs]
+# path is /d1/fieldData/EpochOps/raw/gefsPgrb2ap5/gefs.YYYYMMDD/HH/atmos/pgrb2ap5/gepEE.tHHz.pgrb2a.0p50.fLLL
+# /lfs/h1/ops/prod/com/gefs/v12.2/gefs.20220803/00/atmos/pgrb2ap5/gep18.t00z.pgrb2a.0p5.f024
+# /lfs/h1/ops/prod/com/gefs/v12.2/gefs.20220803/00/atmos/pgrb2bp5/gep18.t00z.pgrb2b.0p5.f024
+
+# the portion of the file name before the ensemble member EE
+gefsDataPath3 = gep

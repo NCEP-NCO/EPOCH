@@ -1,0 +1,525 @@
+/**********************************************************************
+ * TDRP params for ParamsMainNone
+ **********************************************************************/
+
+//======================================================================
+//
+// Main Params.
+//
+//======================================================================
+ 
+///////////// debug_file //////////////////////////////
+//
+// debug file.
+//
+// File with debug settings.
+//
+//
+// Type: string
+//
+
+debug_file = "debug.params";
+
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+//
+// Used for registration with procmap.
+//
+//
+// Type: string
+//
+
+instance = "GEFS";
+
+///////////// procmap_interval_minutes ////////////////
+//
+// Pmu max minutes before restart.
+//
+// Used for registration with procmap.
+//
+//
+// Type: double
+//
+
+procmap_interval_minutes = 5;
+
+//======================================================================
+//
+// End of Main Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for ParamsFcstIn
+ **********************************************************************/
+
+//======================================================================
+//
+// Fcst Params.
+//
+// --------data values for input and output--------------------
+// --------projection file specification ----------------------.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// description of params.
+//
+// Inputs/outputs share the same parameters:
+// name = simple name for this data
+// description = description of how its used in the app
+// url = where data comes from or is written
+// field = field name
+// units = data units
+// remap = TRUE if grid should be remapped to the ConvWx projection for 
+//   read
+// delta_minutes = minutes between obs data
+// lt_hour0 = hour of 0th lead time
+// lt_hour1 = hour of last lead time
+// lt_delta_hours = hours between lead times.
+//
+//======================================================================
+ 
+///////////// fcst_input //////////////////////////////
+//
+// input fcst data.
+//
+// forecast data input.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string name;
+//      string description;
+//      string url;
+//      string field;
+//      string units;
+//      double lt_hour0;
+//      double lt_hour1;
+//      double lt_delta_hours;
+//      boolean remap;
+//      int gt_delta_minutes;
+//   }
+//
+// 1D array - variable length.
+//
+
+fcst_input = {
+  {
+    name = "inputModel",
+    description = "Forecast input",
+    url = "mdvp:://localhost::EpochOps/mdv/model/gefs3hr/3hrAccum",
+    field = "CAPE",
+    units = "none",
+    lt_hour0 = 3,
+    lt_hour1 = 54,
+    lt_delta_hours = 3,
+    remap = TRUE,
+    gt_delta_minutes = 360
+  }
+};
+
+///////////// projection_param_file ///////////////////
+//
+// projection params.
+//
+// params with projection information.
+//
+//
+// Type: string
+//
+
+projection_param_file = "projection_0.5deg.params";
+
+//======================================================================
+//
+// End of Fcst Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for Params
+ **********************************************************************/
+
+//======================================================================
+//
+// PbarCompute.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// PbarCompute.
+//
+//======================================================================
+ 
+///////////// tilingParamFile /////////////////////////
+//
+// Parameter file with tiling information.
+//
+//
+// Type: string
+//
+
+tilingParamFile = "Tiling_20deg_10overlap_0.5deg.params";
+
+///////////// ensembleMembers /////////////////////////
+//
+//
+// Type: string
+// 1D array - variable length.
+//
+
+ensembleMembers = {
+ "gep01",
+ "gep02",
+ "gep03",
+ "gep04",
+ "gep05",
+ "gep06",
+ "gep07",
+ "gep08",
+ "gep09",
+ "gep10",
+ "gep11",
+ "gep12",
+ "gep13",
+ "gep14",
+ "gep15",
+ "gep16",
+ "gep17",
+ "gep18",
+ "gep19",
+ "gep20",
+ "gep21",
+ "gep22",
+ "gep23",
+ "gep24",
+ "gep25",
+ "gep26",
+ "gep27",
+ "gep28",
+ "gep29",
+ "gep30"
+};
+
+///////////// maxAgeHours /////////////////////////////
+//
+// maximum age hours.
+//
+// Maximum age in real time of data compared to current real time in 
+//   order to use the data (hours).
+//
+//
+// Type: double
+//
+
+maxAgeHours = 24;
+
+///////////// triggerFeedbackMinutes //////////////////
+//
+// triggering feedback minutes.
+//
+// Triggering mechanism will return from each URL after this number of 
+//   minutes to tell the handler there has been no new input. Set this 
+//   fairly small to speed up detection of timeout and disable situations.
+//
+//
+// Type: double
+//
+
+triggerFeedbackMinutes = 1;
+
+///////////// urlTimeoutMinutes ///////////////////////
+//
+// URL timout minutes.
+//
+// If a URL has produced data at a gen time, but no new lead times 
+//   trigger, it has 'timed out'.  This parameter tells how long to wait 
+//   until declaring a timeout.  It can be fairly big if this is a rare 
+//   event.
+//
+//
+// Type: double
+//
+
+urlTimeoutMinutes = 60;
+
+///////////// urlDisableMinutes ///////////////////////
+//
+// URL disable minutes.
+//
+// If a URL has not produced data at a gen time, but other URls have, 
+//   the URL is declared 'disabled' if this many minutes have elapsed 
+//   between the first data at the gen time from any URL, and the current 
+//   real time.
+//
+//
+// Type: double
+//
+
+urlDisableMinutes = 60;
+
+///////////// encodingType ////////////////////////////
+//
+// Set encoding type.
+//
+//
+// Type: enum
+// Options:
+//     ENCODING_INT8
+//     ENCODING_INT16
+//     ENCODING_FLOAT32
+//
+
+encodingType = ENCODING_INT8;
+
+///////////// pbarSpdb ////////////////////////////////
+//
+// Pbar Spdb , output of this app.
+//
+//
+// Type: string
+//
+
+pbarSpdb = "spdbp:://localhost::$(PBAR_GEFS)";
+
+///////////// threshMin1 //////////////////////////////
+//
+// Minimum threshold to try, field1.
+//
+//
+// Type: double
+//
+
+threshMin1 = 0.5;
+
+///////////// threshMax1 //////////////////////////////
+//
+// Maximum threshold to try, field1.
+//
+//
+// Type: double
+//
+
+threshMax1 = 6;
+
+///////////// threshDelta1 ////////////////////////////
+//
+// Step between thresholds when trying multiple.
+//
+//
+// Type: double
+//
+
+threshDelta1 = 0.25;
+
+///////////// thresholdedComparison1 //////////////////
+//
+// comparison choice.
+//
+//
+// Type: enum
+// Options:
+//     GREATER_THAN_OR_EQUAL
+//     LESS_THAN_OR_EQUAL
+//
+
+thresholdedComparison1 = GREATER_THAN_OR_EQUAL;
+
+///////////// inputThreshField1 ///////////////////////
+//
+// Input threshold data field name in ensemble model data, goes into 
+//   SPDB.
+//
+//
+// Type: string
+//
+
+inputThreshField1 = "APCP3Hr";
+
+///////////// threshFieldColdstartThreshold1 //////////
+//
+// Input thresholded field data default coldstart threshold.
+//
+//
+// Type: double
+//
+
+threshFieldColdstartThreshold1 = 2;
+
+///////////// threshMin2 //////////////////////////////
+//
+// Minimum threshold to try, field2.
+//
+//
+// Type: double
+//
+
+threshMin2 = 170;
+
+///////////// threshMax2 //////////////////////////////
+//
+// Maximum threshold to try, field2.
+//
+//
+// Type: double
+//
+
+threshMax2 = 350;
+
+///////////// threshDelta2 ////////////////////////////
+//
+// Step between thresholds when trying multiple.
+//
+//
+// Type: double
+//
+
+threshDelta2 = 10;
+
+///////////// thresholdedComparison2 //////////////////
+//
+// comparison choice.
+//
+//
+// Type: enum
+// Options:
+//     GREATER_THAN_OR_EQUAL
+//     LESS_THAN_OR_EQUAL
+//
+
+thresholdedComparison2 = LESS_THAN_OR_EQUAL;
+
+///////////// inputThreshField2 ///////////////////////
+//
+// Input threshold data field name in ensemble model data, goes into 
+//   SPDB.
+//
+//
+// Type: string
+//
+
+inputThreshField2 = "ULWRF3Hr";
+
+///////////// threshFieldColdstartThreshold2 //////////
+//
+// Input thresholded field data default coldstart threshold.
+//
+//
+// Type: double
+//
+
+threshFieldColdstartThreshold2 = 200;
+
+///////////// hasFixedField1 //////////////////////////
+//
+// Use a input along with a fixed threshold for field1.
+//
+//
+// Type: boolean
+//
+
+hasFixedField1 = FALSE;
+
+///////////// inputFixedField1 ////////////////////////
+//
+// Input fixed field in model data, goes into SPDB as a fixed value, if 
+//   hasFixedField1, ignored otherwise.
+//
+//
+// Type: string
+//
+
+inputFixedField1 = "CAPE";
+
+///////////// fixedFieldComparison1 ///////////////////
+//
+// comparison choice for fixed field, ignored if hasFixedField is FALSE.
+//
+//
+// Type: enum
+// Options:
+//     GREATER_THAN_OR_EQUAL
+//     LESS_THAN_OR_EQUAL
+//
+
+fixedFieldComparison1 = GREATER_THAN_OR_EQUAL;
+
+///////////// fixedThreshold1 /////////////////////////
+//
+// The fixed field threshold to use, if hasFixedField is true.
+//
+//
+// Type: double
+//
+
+fixedThreshold1 = 200;
+
+///////////// hasFixedField2 //////////////////////////
+//
+// Use a input along with a fixed threshold for field2.
+//
+//
+// Type: boolean
+//
+
+hasFixedField2 = FALSE;
+
+///////////// inputFixedField2 ////////////////////////
+//
+// Input fixed field in model data, goes into SPDB as a fixed value, if 
+//   hasFixedField2, ignored otherwise.
+//
+//
+// Type: string
+//
+
+inputFixedField2 = "CAPE";
+
+///////////// fixedFieldComparison2 ///////////////////
+//
+// comparison choice for fixed field, ignored if hasFixedField2 is FALSE.
+//
+//
+// Type: enum
+// Options:
+//     GREATER_THAN_OR_EQUAL
+//     LESS_THAN_OR_EQUAL
+//
+
+fixedFieldComparison2 = GREATER_THAN_OR_EQUAL;
+
+///////////// fixedThreshold2 /////////////////////////
+//
+// The fixed field threshold to use, if hasFixedField2 is true.
+//
+//
+// Type: double
+//
+
+fixedThreshold2 = 200;
+
+///////////// num_threads /////////////////////////////
+//
+// Number of threads on ensemble member, 0 or 1 for no threading.
+//
+//
+// Type: int
+//
+
+num_threads = 1;
+//num_threads = 20;
+
+///////////// debug_state /////////////////////////////
+//
+// Set true to see more debugging of internal state.
+//
+//
+// Type: boolean
+//
+
+debug_state = FALSE;
+

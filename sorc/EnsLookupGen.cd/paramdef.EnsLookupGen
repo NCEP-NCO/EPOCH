@@ -1,0 +1,146 @@
+commentdef {
+  p_header = "EnsLookupGen";
+}
+
+commentdef {
+  p_header = "EnsLookupGen";   	    
+}
+
+
+paramdef string
+{
+  p_default = {"gep01","gep02","gep03","gep04","gep05","gep06","gep07","gep08","gep09","gep10",
+               "gep11","gep12","gep13","gep14","gep15","gep16","gep17","gep18","gep19","gep20"};	
+} ensembleMembers[];	
+
+  
+paramdef string
+{
+ p_default = "proj.parm";
+ p_help = "Projection file for extended domain";
+} extendedProjectionFile;
+
+typedef enum {LE,EQ,GE} Compare_t;
+
+paramdef string
+{
+  p_default = {"thresh.parm"};
+  p_help = "Files with Specification of all the database and fixed input thresholds";
+} threshParmFile[];
+
+paramdef double
+{
+  p_descr = "maximum age hours";
+  p_help = "Maximum age in real time of data compared to current real time in order to use the data (hours)";
+  p_default = 24.0;
+} maxAgeHours;
+
+paramdef double
+{
+  p_descr = "triggering feedback minutes";
+  p_help = "Triggering mechanism will return from each URL after this number of minutes to tell the handler there has been no new
+ input. Set this fairly small to speed up detection of timeout and disable situations.";
+  p_default = 1.0;
+} triggerFeedbackMinutes;
+
+paramdef double
+{
+  p_descr = "URL timout minutes";
+  p_help = "If a URL has produced data at a gen time, but no new lead times trigger, it has 'timed out'.  This parameter tells how long to wait until declaring a timeout.  It can be fairly big if this is a rare event";
+  p_default = 60.0;
+} urlTimeoutMinutes;
+
+paramdef double
+{
+  p_descr = "URL disable minutes";
+  p_help = "If a URL has not produced data at a gen time, but other URls have, the URL is declared 'disabled' if this many minute
+s have elapsed between the first data at the gen time from any URL, and the current real time";
+  p_default = 60.0;
+} urlDisableMinutes;
+
+typedef enum {
+  ENCODING_INT8 =      1,
+  ENCODING_INT16 =     2,
+  ENCODING_FLOAT32 =   5
+} encodingType_t;
+
+paramdef enum encodingType_t {
+  p_default = ENCODING_INT8;
+  p_descr = "Set encoding type.";
+} encodingType;
+
+paramdef double
+{
+  p_descr = "Archive mode offset for SPDB";
+  p_help = "threshold SPDB is typically written in real time several days after the fact, only when the model verifies to Cmorph data, which also comes in late.  This param is the typcial offset (hours), should be >=0, this is hours BACK";
+  p_default = 84;
+} archiveSpdbBestOffsetHours;
+
+paramdef double
+{
+  p_descr = "Archive mode range of offsets for SPDB";
+  p_help = "The range of allowed offsets from gentime for SPDB in archive mode, hours BACK from real time, largest number first";
+  p_default = {96, 72};
+} archiveSpdbOffsetHours[2];
+
+paramdef double
+{
+  p_descr = "Realtime allowed offsets from gen time";
+  p_help = "Range of offsets (hours) from gen time for SPDB data. The newest data in this range will be used";
+  p_default = {-24, 6};
+} realtimeSpdbOffsetHours[2];
+
+paramdef int 
+{
+  p_descr = "Smoothing of tiled grid";
+  p_help = "Number of gridpoints in x and y to smooth stitched tiled grids";
+  p_default = 0;
+} nptSmoothTiledGrid;
+
+paramdef double
+{
+  p_descr = "Weighting of tiled grid";
+  p_help = "Tile centerpoint weight";
+  p_default = 1.0;
+} centerWeightTiledGrid;
+
+paramdef double 
+{
+  p_descr = "Weighting of tiled grid";
+  p_help = "Tile edge weight";
+  p_default = 0.1;
+} edgeWeightTiledGrid;
+
+paramdef double
+{
+  p_descr = "debug lat/lon";
+  p_help = "latitude/longitude of a point to debug, {0,0} for no debugging";
+  p_default = {0,0};
+} debugLatlon[2];
+
+paramdef boolean
+{
+  p_descr = "debug SPDB flag";
+  p_help = "True to print out similar to ThreshViewer for specific tiles";
+  p_default = false;
+} debugSpdb;
+
+paramdef int
+{
+  p_descr = "Set of tile indices to print, empty to print all indices";
+  p_help = "Used only when debugSpdb is true";
+  p_default = {};
+} debugTiles[];
+
+paramdef int
+{
+  p_descr = "Number of points (y) to penetrate the domain to first get full original thresholds";
+  p_help = "A linear increase in percentage weight given to fixed outside thresholds when closer to boundary";
+  p_default = 10;
+} maximumNptInside;
+
+paramdef int
+{
+  p_default = 0;
+  p_help = "Number of threads on lead time, 0 or 1 for no threading";
+} num_threads;

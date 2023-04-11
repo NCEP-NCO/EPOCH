@@ -1,0 +1,468 @@
+/**********************************************************************
+ * TDRP params for ParamsMainNone
+ **********************************************************************/
+
+//======================================================================
+//
+// Main Params.
+//
+//======================================================================
+ 
+///////////// debug_file //////////////////////////////
+//
+// debug file.
+//
+// File with debug settings.
+//
+//
+// Type: string
+//
+
+debug_file = "debug.params";
+
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+//
+// Used for registration with procmap.
+//
+//
+// Type: string
+//
+
+instance = "CMCE";
+
+///////////// procmap_interval_minutes ////////////////
+//
+// Pmu max minutes before restart.
+//
+// Used for registration with procmap.
+//
+//
+// Type: double
+//
+
+procmap_interval_minutes = 5;
+
+//======================================================================
+//
+// End of Main Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for ParamsFcstInOut
+ **********************************************************************/
+
+//======================================================================
+//
+// Fcst Params.
+//
+// --------data values for input and output--------------------
+// --------projection file specification ----------------------.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// description of params.
+//
+// Inputs/outputs share the same parameters:
+// name = simple name for this data
+// description = description of how its used in the app
+// url = where data comes from or is written
+// field = field name
+// units = data units
+// remap = TRUE if grid should be remapped to the ConvWx projection for 
+//   read
+// delta_minutes = minutes between obs data
+// lt_hour0 = hour of 0th lead time
+// lt_hour1 = hour of last lead time
+// lt_delta_hours = hours between lead times.
+//
+//======================================================================
+ 
+///////////// fcst_input //////////////////////////////
+//
+// input fcst data.
+//
+// forecast data input.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string name;
+//      string description;
+//      string url;
+//      string field;
+//      string units;
+//      double lt_hour0;
+//      double lt_hour1;
+//      double lt_delta_hours;
+//      boolean remap;
+//      int gt_delta_minutes;
+//   }
+//
+// 1D array - variable length.
+//
+
+fcst_input = {
+  {
+    name = "cmce",
+    description = "Forecast input",
+    url = "mdvp:://localhost::EpochOps/mdv/model/cmce3hr/3hrAccum",
+    field = "CAPE",
+    units = "none",
+    lt_hour0 = 3,
+    lt_hour1 = 54,
+    lt_delta_hours = 3,
+    remap = TRUE,
+    gt_delta_minutes = 720
+  }
+};
+
+///////////// fcst_output /////////////////////////////
+//
+// output fcst data.
+//
+// forecast data output.
+//
+//
+// Type: struct
+//   typedef struct {
+//      string name;
+//      string description;
+//      string url;
+//      string field;
+//      string units;
+//      double lt_hour0;
+//      double lt_hour1;
+//      double lt_delta_hours;
+//      boolean remap;
+//      int gt_delta_minutes;
+//   }
+//
+// 1D array - variable length.
+//
+
+fcst_output = {
+ {
+    name = "outputModel",
+    description = "Forecast output",
+    url = "mdvp:://localhost::$(EPOCH_CMCE_PROB_OPT)",
+    field = "ProbConvWx",
+    units = "none",
+    lt_hour0 = 3,
+    lt_hour1 = 54,
+    lt_delta_hours = 3,
+    remap = FALSE,
+    gt_delta_minutes = 720
+  }
+};
+
+///////////// projection_param_file ///////////////////
+//
+// projection params.
+//
+// params with projection information.
+//
+//
+// Type: string
+//
+
+projection_param_file = "projection_0.5deg.params";
+
+//======================================================================
+//
+// End of Fcst Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for Params
+ **********************************************************************/
+
+//======================================================================
+//
+// EnsFcstGenLookupGenBased.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// EnsFcstGenLookupGenBased.
+//
+//======================================================================
+ 
+///////////// ensembleMembers /////////////////////////
+//
+//
+// Type: string
+// 1D array - variable length.
+//
+
+ensembleMembers = {
+ "gep01",
+ "gep02",
+ "gep03",
+ "gep04",
+ "gep05",
+ "gep06",
+ "gep07",
+ "gep08",
+ "gep09",
+ "gep10",
+ "gep11",
+ "gep12",
+ "gep13",
+ "gep14",
+ "gep15",
+ "gep16",
+ "gep17",
+ "gep18",
+ "gep19",
+ "gep20"
+};
+
+///////////// extendedProjectionFile //////////////////
+//
+// Projection file for extended domain.
+//
+//
+// Type: string
+//
+
+extendedProjectionFile = "projection_0.5deg_extend.params";
+
+
+///////////// threshParmFile //////////////////////////
+//
+// Files with Specification of all the database input thresholds.
+//
+//
+// Type: string
+// 1D array - variable length.
+//
+
+threshParmFile = { "APCP-CMCE.params", "CAPE-output.params", "TMP-output.params" };
+
+///////////// maxAgeHours /////////////////////////////
+//
+// maximum age hours.
+//
+// Maximum age in real time of data compared to current real time in 
+//   order to use the data (hours).
+//
+//
+// Type: double
+//
+
+maxAgeHours = 24;
+
+///////////// triggerFeedbackMinutes //////////////////
+//
+// triggering feedback minutes.
+//
+// Triggering mechanism will return from each URL after this number of 
+//   minutes to tell the handler there has been no new input. Set this 
+//   fairly small to speed up detection of timeout and disable situations.
+//
+//
+// Type: double
+//
+
+triggerFeedbackMinutes = 1;
+
+///////////// urlTimeoutMinutes ///////////////////////
+//
+// URL timout minutes.
+//
+// If a URL has produced data at a gen time, but no new lead times 
+//   trigger, it has 'timed out'.  This parameter tells how long to wait 
+//   until declaring a timeout.  It can be fairly big if this is a rare 
+//   event.
+//
+//
+// Type: double
+//
+
+urlTimeoutMinutes = 60;
+
+///////////// urlDisableMinutes ///////////////////////
+//
+// URL disable minutes.
+//
+// If a URL has not produced data at a gen time, but other URls have, 
+//   the URL is declared 'disabled' if this many minutes have elapsed 
+//   between the first data at the gen time from any URL, and the current 
+//   real time.
+//
+//
+// Type: double
+//
+
+urlDisableMinutes = 60;
+
+///////////// encodingType ////////////////////////////
+//
+// Set encoding type.
+//
+//
+// Type: enum
+// Options:
+//     ENCODING_INT8
+//     ENCODING_INT16
+//     ENCODING_FLOAT32
+//
+
+encodingType = ENCODING_FLOAT32;
+
+///////////// archiveSpdbBestOffsetHours //////////////
+//
+// Archive mode offset for SPDB.
+//
+// threshold SPDB is typically written in real time several days after
+//   the fact, only when the model verifies to Cmorph data, which also
+//   comes in late.  This param is the typcial offset (hours), should be
+//   >=0.
+//
+//
+// Type: double
+//
+
+archiveSpdbBestOffsetHours = 84;
+
+///////////// archiveSpdbOffsetHours //////////////////
+//
+// Archive mode range of offsets for SPDB.
+//
+// The range of allowed offsets from gentime for SPDB in archive mode.
+//
+//
+// Type: double
+// 1D array - fixed length - 2 elements.
+//
+
+archiveSpdbOffsetHours = {
+ 96,
+ 72
+};
+
+///////////// realtimeSpdbOffsetHours /////////////////
+//
+// Realtime allowed offsets from gen time.
+//
+// Range of offsets (hours) from gen time for SPDB data. The newest data 
+//   in this range will be used.
+//
+//
+// Type: double
+// 1D array - fixed length - 2 elements.
+//
+
+realtimeSpdbOffsetHours = {
+ -240,
+ 0
+};
+
+///////////// nptSmoothTiledGrid //////////////////////
+//
+// Smoothing of tiled grid.
+//
+// Number of gridpoints in x and y to smooth stitched tiled grids.
+//
+//
+// Type: int
+//
+
+nptSmoothTiledGrid = 20;
+
+///////////// centerWeightTiledGrid ///////////////////
+//
+// Weighting of tiled grid.
+//
+// Tile centerpoint weight.
+//
+//
+// Type: double
+//
+
+centerWeightTiledGrid = 1;
+
+///////////// edgeWeightTiledGrid /////////////////////
+//
+// Weighting of tiled grid.
+//
+// Tile edge weight.
+//
+//
+// Type: double
+//
+
+edgeWeightTiledGrid = 0.1;
+
+///////////// debugLatlon ////////////////////////////
+//
+// debug lat/lon.
+//
+// latitude/longitude of a point to debug, {0,0} for no debugging.
+//
+//
+// Type: double
+// 1D array - fixed length - 2 elements.
+//
+
+debugLatlon = {
+ 0,
+ 0
+};
+
+///////////// debugSpdb ///////////////////////////////
+//
+// debug SPDB flag.
+//
+// True to print out similar to ThreshViewer for specific tiles.
+//
+//
+// Type: boolean
+//
+
+debugSpdb = FALSE;
+
+///////////// debugTiles //////////////////////////////
+//
+// Set of tile indices to print, empty to print all indices.
+//
+// Used only when debugSpdb is true.
+//
+//
+// Type: int
+// 1D array - variable length.
+//
+
+debugTiles = {0, 316};
+
+///////////// maximumNptInside //////////////////////
+//
+// Number of points (y) to penetrate the domain to first get full 
+//   original thresholds.
+//
+// A linear increase in percentage weight given to fixed outside 
+//   thresholds when closer to boundary.
+//
+//
+// Type: int
+//
+
+maximumNptInside = 30;
+
+///////////// num_threads /////////////////////////////
+//
+// Number of threads on ensemble member, 0 or 1 for no threading.
+//
+//
+// Type: int
+//
+
+num_threads = 1;
+//num_threads = 20;

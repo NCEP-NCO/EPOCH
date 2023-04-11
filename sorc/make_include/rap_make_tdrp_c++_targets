@@ -1,0 +1,32 @@
+# *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* 
+# ** Copyright UCAR (c) 1992 - 2020
+# ** University Corporation for Atmospheric Research(UCAR) 
+# ** National Center for Atmospheric Research(NCAR) 
+# ** Research Applications Laboratory(RAL) 
+# ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA 
+# *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* 
+###########################################################
+#
+# rap_make_tdrp_c++_targets.nofail
+#
+# targets to be included for using tdrp with C++ programs
+# if tdrp_gen does not exist, it will not be invoked.
+# in this case Params.cc and Params.hh must already exist.
+#
+# Mike Dixon
+#
+# EOl,NCAR,Boulder,Colorado,80307,USA
+#
+# Sept 2020
+#
+############################################################
+
+$(PARAMS_HH): 
+
+$(PARAMS_CC): 
+
+clean_tdrp:
+
+
+
+

@@ -1,0 +1,445 @@
+
+** Program 'MdvtoGrib2'
+** Copyright (c) 1992-2013 UCAR
+** University Corporation for Atmospheric Research - UCAR.
+** National Center for Atmospheric Research - NCAR.
+** Research Applications Program - RAP.
+** P.O.Box 3000, Boulder, Colorado, 80307, USA.
+** Run-time 2013/07/07 22:53:25.
+
+/**********************************************************************
+ * TDRP params for MdvtoGrib2
+ **********************************************************************/
+
+///////////// debug ///////////////////////////////////
+//
+// Debug flag.
+// Type: boolean
+//
+
+debug = TRUE;
+
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+// Used for registration with procmap.
+// Type: string
+//
+
+instance = "default";
+
+//======================================================================
+//
+// MDV INPUT PARAMETERS.
+//
+//======================================================================
+ 
+///////////// trigger_mode ////////////////////////////
+//
+// Input triggering mode.
+// In LATEST_DATA mode, the program waits for new data from the MDV 
+//   location specified by the input_url parameter.
+//  
+// In TIME_LIST mode, the program operates on archive data as specified 
+//   with the -start and -end args and input_url parameter.
+// TIME_LIST mode is automatically invoked by -start and -end options on 
+//   the command line
+//  
+// In FILE_LIST mode, the files listed on the command line using the -f 
+//   command line option are processed.
+// FILE_LIST mode is automatically invoked by -f option on the command 
+//   line.
+//
+// Type: enum
+// Options:
+//     LATEST_DATA
+//     TIME_LIST
+//     FILE_LIST
+//     LATEST_DATA_FCST
+//
+
+trigger_mode = LATEST_DATA_FCST;
+
+///////////// tolerance_seconds ///////////////////////
+//
+// Time tolerance.
+// Number of seconds allowed difference between latest data time and 
+//   data time when mode = LATEST_DATA or LATEST_DATA_FCST.
+// Type: int
+//
+
+tolerance_seconds = 0;
+
+///////////// input_url ///////////////////////////////
+//
+// Input URL to use when using LATEST_DATA or TIME_LIST trigger.
+// Type: string
+//
+
+input_url = "mdvp:://localhost::$(EPOCH_OPT_CLOUDTOPS_MDV)";
+
+//======================================================================
+//
+// GRIB2 PARAMETERS.
+//
+//======================================================================
+ 
+///////////// output_dir //////////////////////////////
+//
+// Output directory.
+// Output files names are based on the input mdv file name.
+// Type: string
+//
+
+output_dir = "$(EPOCH_OPT_CCT40_GRIB)";
+
+///////////// create_ldatainfo ////////////////////////
+//
+// Create LDataInfo file.
+// Type: boolean
+//
+
+create_ldatainfo = TRUE;
+
+///////////// production_status ///////////////////////
+//
+// Production status of the data.
+// 	0 - Operational products
+// 	1 - Operational test products
+// 	2 - Research products
+// 	3 - Re-analysis products.
+// Type: int
+//
+
+production_status = 2;
+
+///////////// centre_id ///////////////////////////////
+//
+// Originating center.
+// See http://www.nco.ncep.noaa.gov/pmb/docs/on388/table0.html
+// It is advised to use 60 - NCAR.
+// 	0  - WMO Secretariat
+// 	7  - NCEP
+// 	8  - NWS Telecommunications Gateway
+// 	9  - NWS other
+// 	59 - NOAA FSL
+// 	60 - NCAR.
+// Type: int
+//
+
+centre_id = 60;
+
+///////////// sub_centre_id ///////////////////////////
+//
+// Origination centers sub center id.
+// Each project could have their own id here.
+// Type: int
+//
+
+sub_centre_id = 0;
+
+///////////// background_process_id ///////////////////
+//
+// Originating sub centers background generating process identifier.
+// Each process could have its own id here.
+// Type: int
+//
+
+background_process_id = 0;
+
+///////////// forecast_process_id /////////////////////
+//
+// Originating sub centers forecast generating process identifier.
+// Each process could have its own id here.
+// Type: int
+//
+
+forecast_process_id = 0;
+
+///////////// discipline_number ///////////////////////
+//
+// Discipline type of data in this GRIB file.
+// Only one discipline type can be used per file.
+// See http://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_table4-2.shtml
+// 	0 = Meteorological data
+// 	1 = Hydrological data
+// 	2 = Land surface data
+// 	3 = Space data
+// 	10 = Oceanographic data.
+// Type: int
+//
+
+discipline_number = 0;
+
+///////////// record_mode /////////////////////////////
+//
+// Output grib record divisions type.
+// This param defines when to create grib record divisions.
+//  
+// SINGLE_RECORD mode, (Best) Allows program to repeat sections of the 
+//   grib record whenever possible.
+// RECORD_BY_FIELD mode, Creates a new grib record when ever a new field 
+//   is  encountered.
+// RECORD_BY_PLANE mode, Creates a new grib record for each field and 
+//   vertical level (esentially no repeated sections).
+//
+// Type: enum
+// Options:
+//     SINGLE_RECORD
+//     RECORD_BY_FIELD
+//     RECORD_BY_PLANE
+//
+
+record_mode = SINGLE_RECORD;
+
+///////////// output_fields ///////////////////////////
+//
+// List of fields to read from MDV and write to the GRIB2 file.
+//    
+// str	mdv_field_name - Field name of the field in the MDV file.
+// 	                 Used only if mdv_field_num is -1.
+//  
+// int	mdv_field_num - Field number of the field in the MDV file.
+// 	                Set to -1 to use mdv_field_name instead.
+//  
+// int	process_type - Type of generating process.
+// 	  0  - Analysis
+// 	  1  - Initialization
+// 	  2  - Forecast
+// 	  3  - Bias Corrected Forecast
+// 	  4  - Ensemble Forecast
+// 	  5  - Probability Forecast
+// 	  6  - Forecast Error
+// 	  7  - Analysis Error
+// 	  8  - Observation
+//  
+// int	param_category - Parameter category number.
+//       A parameter category and parameter number must be chosen 
+//       for each field. All numbers are predefined and should be
+//       looked up on the following web pages: 
+//  http://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_table4-2.shtml
+//  
+// int	param_number - Parameter number within parameter category.
+//                     Should be chosen from above web pages.
+//               Note: Data units must be as shown on web page.
+//  
+// int	data_type - 
+// 	  0  - Analysis or forecast.
+// 	  1  - Individual ensemble forecast.
+// 	  2  - Derived forecast, based on all ensemble members.
+// 	  5  - Probability forecast.
+// 	  6  - Percentile forecast.
+// 	  7  - Analysis or forecast error.
+// 	  8  - Statistically processed value over a time interval.
+// 	  9  - Probability forecast over a time interval.
+// 	  10 - Percentile forecast over a time interval.
+// 	  11 - Individual ensemble forecast over a time interval.
+// 	  12 - Derived forecast based on ensemble members over a time.
+//    
+// int	compress_method - Data encoding method.
+// 	  0  - Simple packing method.
+// 	  41 - PNG compression.
+// 	  40 - Jpeg 2000 compression.
+//  
+// float floating_point_precision - Number of decimal places to store
+// 	                            data in the Grib2 file.
+//  
+// bool	override_surface_type - The program will attempt to 'determine'
+// 	                        vertical level information from the MDV file
+// 	                        Set this to true to override those values.
+//  
+// int	first_surface_type - The surface level bottom type.
+// 	                     The value is still read from the Mdv file.
+// 	                 Used only if override_surface_type is set to true.
+//  
+// int	second_surface_type - The surface level top type.
+// 	                      The value is still read from the Mdv file.
+// 	                 Used only if override_surface_type is set to true.
+//  
+// int	prod_type - Used only if data_type is 1, 2, 5, 8, 9, 11 or 12
+// 	  1, 11 - Individual Ensemble Forecast type
+// 		0   - Unperturbed High-Resolution Control Forecast
+// 		1   - Unperturbed Low-Resolution Control Forecast
+// 		2   - Negatively Perturbed Forecast
+// 		3   - Positively Perturbed Forecast
+// 		255 - None
+// 	  2, 12 - Derived Ensemble Forecast type
+// 		0 - Unweighted Mean of All Members
+// 		1 - Weighted Mean of All Members
+// 		2 - Standard Deviation with respect to Cluster Mean
+// 		3 - Standard Deviation with respect to Cluster Mean, Normalized
+// 		4 - Spread of All Members
+// 		5 - Large Anomaly Index of All Members
+// 		6 - Unweighted Mean of the Cluster Members
+// 	  5, 9 - Probability Forecast type
+// 		0 - Probability of event below lower limit
+// 		1 - Probability of event above upper limit
+// 		2 - Probability of event between upper and lower limits
+// 		3 - Probability of event above lower limit
+// 		4 - Probability of event below upper limit
+//  
+// int	num_forecasts - Number of associated Ensemble forecasts
+// 	                Used only if data_type is 1, 2, 5, 9, 11 or 12
+//  
+// int	time_interval_type - Used only if data_type is 8, 9, 10, 11 or 12
+// 	  0   - Average
+// 	  1   - Accumulation
+// 	  2   - Maximum
+// 	  3   - Minimum
+// 	  4   - Difference (end minus beginning)
+// 	  5   - Root Mean Square
+// 	  6   - Standard Deviation
+// 	  7   - Covariance (temporal variance)
+// 	  8   - Difference (beginning minus end)
+// 	  9   - Ratio
+// 	  255 - None
+//  
+// int	time_interval - Data time interval in seconds
+// 	                Used only if data_type is 8, 9, 10, 11 or 12
+//  
+// int	user_data_value - Used only if data_type is 1, 5, 6, 9, 10 or 11
+// 	  1, 11 - This is the perturbation number
+// 	  5, 9  - This is the probability number
+// 	  6, 10 - This is the percentile value (from 100 - 0)
+//  
+// float lower_limit / upper_limit - Used only if data_type is 5 or 9
+// 		This is the lower and/or upper limit of the forecast probability
+// 	data_convert_parameter - Parameter used in data conversion:
+// 		DATA_CONVERT_NONE - parameter not used.
+// 		DATA_CONVERT_MULTIPLY - the MDV values are multiplied by this value 
+//   before being written to the GRIB file.
+// 	data_addend - This value will be added to the data values; the 
+//   default addend is 0.
+//
+// Type: struct
+//   typedef struct {
+//      string mdv_field_name;
+//      int mdv_field_num;
+//      int process_type;
+//      int param_category;
+//      int param_number;
+//      int data_type;
+//      int compress_method;
+//      int floating_point_precision;
+//      boolean override_surface_type;
+//      int first_surface_type;
+//      int second_surface_type;
+//      int prod_type;
+//      int num_forecasts;
+//      int time_interval_type;
+//      int time_interval;
+//      int user_data_value;
+//      float lower_limit;
+//      float upper_limit;
+//      data_convert_type_t data_convert_type;
+//        Options:
+//          DATA_CONVERT_NONE
+//          DATA_CONVERT_MULTIPLY
+//      double data_convert_parameter;
+//      double data_addend;
+//   }
+//
+// 1D array - variable length.
+//
+
+output_fields = {
+{ "ProbCCTge40kFT",-1, 5, 3, 5, 5, 40, 4, TRUE, 243, 255, 1,0,0,0,9,0,12192,DATA_CONVERT_NONE, 1, 0} 
+};
+
+///////////// remap_output ////////////////////////////
+//
+// Flag indicating whether to remap the output fields.
+// If TRUE, the output fields will be remapped according to the 
+//   information in the remap_info parameter.
+// Type: boolean
+//
+
+remap_output = FALSE;
+
+///////////// remap_info //////////////////////////////
+//
+// Information on how to remap the output fields. Used only if 
+//   remap_output is set to TRUE.
+// 	proj_type - specifies the output projection to use. Can be either 
+//   PROJ_LATLON or PROJ_LAMBERT_CONF. Currently, only PROJ_LAMBERT_CONF 
+//   is supported.
+// 	nx, ny - specify the output grid dimensions.
+// 	minx, miny - specify the output grid location.
+// 	dx, dy - specify the output grid resolution.
+// 	origin_lat, origin_lon - specify the output grid origin. Used only 
+//   if proj_type is set to PROJ_LAMBERT_CONF.
+// lat1, lat2 - specify the output grid parameters. Used only if 
+//   proj_type is set to PROJ_LAMBERT_CONF.
+//
+// Type: struct
+//   typedef struct {
+//      proj_type_t proj_type;
+//        Options:
+//          PROJ_LATLON
+//          PROJ_LAMBERT_CONF
+//      long nx;
+//      long ny;
+//      double minx;
+//      double miny;
+//      double dx;
+//      double dy;
+//      double origin_lat;
+//      double origin_lon;
+//      double lat1;
+//      double lat2;
+//   }
+//
+//
+
+remap_info = { PROJ_LATLON, 121, 51, 120, 0 , 1, 1, 0,0, 0, 0};
+
+///////////// use_horiz_limits ////////////////////////
+//
+// Flag indicating whether to apply horizontal limits instead of 
+//   remapping the output fields using the remap_info.
+// If TRUE and Lambert Conformal projection, the output fields will be 
+//   limited by the horizontal boundary (minLat/maxLat/minLon/maxLon).
+// Type: boolean
+//
+
+use_horiz_limits = FALSE;
+
+///////////// horiz_limits ////////////////////////////
+//
+// Bounding box which defines the horizontal limits of the target 
+//   data.Used only if use_horiz_limits is set to TRUE.
+// 	min_lat - specifies the minimum latitude.
+// 	max_lat - specifies the maximum latitude.
+// 	min_lon - specifies the minimum longitude.
+// 	max_lon - specifies the maximum longitude.
+//
+// Type: struct
+//   typedef struct {
+//      double min_lat;
+//      double max_lat;
+//      double min_lon;
+//      double max_lon;
+//   }
+//
+//
+
+horiz_limits = { 0, 50, 120, -120};
+
+///////////// use_iso8601_filename_convention /////////
+//
+// If true the output filename uses the basename, followed by ISO 8601 
+//   timestamp convention.
+// eg. basename.2008-05-22T14:00:00.grb2.
+// Type: boolean
+//
+
+use_iso8601_filename_convention = TRUE;
+
+///////////// basename ////////////////////////////////
+//
+// basename of grib files, used only when 
+//   use_iso8601_filename_convention=TRUE.
+// Type: string
+//
+
+basename = "EPOCH.CCT40.";

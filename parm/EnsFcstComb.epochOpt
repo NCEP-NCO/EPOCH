@@ -1,0 +1,281 @@
+/**********************************************************************
+ * TDRP params for ParamsMainNone
+ **********************************************************************/
+
+//======================================================================
+//
+// Main Params.
+//
+//======================================================================
+ 
+///////////// debug_file //////////////////////////////
+//
+// debug file.
+// File with debug settings.
+// Type: string
+//
+
+debug_file = "debug.params";
+
+///////////// instance ////////////////////////////////
+//
+// Process instance.
+// Used for registration with procmap.
+// Type: string
+//
+
+instance = "epoch";
+
+///////////// procmap_interval_minutes ////////////////
+//
+// Pmu max minutes before restart.
+// Used for registration with procmap.
+// Type: double
+//
+
+procmap_interval_minutes = 5;
+
+//======================================================================
+//
+// End of Main Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for ParamsFcstInOut
+ **********************************************************************/
+
+//======================================================================
+//
+// Fcst Params.
+//
+// --------data values for input and output--------------------
+// --------projection file specification ----------------------.
+//
+//======================================================================
+ 
+//======================================================================
+//
+// description of params.
+//
+// Inputs/outputs share the same parameters:
+// name = simple name for this data
+// description = description of how its used in the app
+// url = where data comes from or is written
+// field = field name
+// units = data units
+// remap = TRUE if grid should be remapped to the ConvWx projection for 
+//   read
+// delta_minutes = minutes between obs data
+// lt_hour0 = hour of 0th lead time
+// lt_hour1 = hour of last lead time
+// lt_delta_hours = hours between lead times.
+//
+//======================================================================
+ 
+///////////// fcst_input //////////////////////////////
+//
+// input fcst data.
+// forecast data input.
+//
+// Type: struct
+//   typedef struct {
+//      string name;
+//      string description;
+//      string url;
+//      string field;
+//      string units;
+//      double lt_hour0;
+//      double lt_hour1;
+//      double lt_delta_hours;
+//      boolean remap;
+//      int gt_delta_minutes;
+//   }
+//
+// 1D array - variable length.
+//
+
+fcst_input = {
+  {
+    name = "gefsProb",
+    description = "Forecast input1",
+    url = "mdvp:://localhost::$(EPOCH_GEFS_PROB_OPT)",
+    field = "ProbConvWx",
+    units = "none",
+    lt_hour0 = 3,
+    lt_hour1 = 48,
+    lt_delta_hours = 3,
+    remap = TRUE,
+    gt_delta_minutes = 360 
+  }
+  ,
+  {
+    name = "cmceProb",
+    description = "Forecast input2",
+    url = "mdvp:://localhost::$(EPOCH_CMCE_PROB_OPT)",
+    field = "ProbConvWx",
+    units = "none",
+    lt_hour0 = 3,
+    lt_hour1 = 48,
+    lt_delta_hours = 3,
+    remap = TRUE,
+    gt_delta_minutes = 720 
+  }
+};
+
+///////////// fcst_output /////////////////////////////
+//
+// output fcst data.
+// forecast data output.
+//
+// Type: struct
+//   typedef struct {
+//      string name;
+//      string description;
+//      string url;
+//      string field;
+//      string units;
+//      double lt_hour0;
+//      double lt_hour1;
+//      double lt_delta_hours;
+//      boolean remap;
+//      int gt_delta_minutes;
+//   }
+//
+// 1D array - variable length.
+//
+
+fcst_output = {
+  {
+    name = "epoch",
+    description = "Forecast output",
+    url = "mdvp:://localhost::$(EPOCH_OPT_MDV)",
+    field = "ProbConvWx",
+    units = "none",
+    lt_hour0 = 3,
+    lt_hour1 = 48,
+    lt_delta_hours = 3,
+    remap = FALSE,
+    gt_delta_minutes = 360 
+  }
+};
+
+///////////// projection_param_file ///////////////////
+//
+// projection params.
+// params with projection information.
+// Type: string
+//
+
+projection_param_file = "projection_0.5deg_extend.params";
+
+//======================================================================
+//
+// End of Fcst Params.
+//
+//======================================================================
+ 
+/**********************************************************************
+ * TDRP params for Params
+ **********************************************************************/
+
+//======================================================================
+//
+// EnsFcstComb.
+//
+//======================================================================
+ 
+
+///////////// fieldNames //////////////////////////////
+//
+// Input/output field names.
+//
+//
+// Type: string
+// 1D array - variable length.
+//
+
+fieldNames = {"ProbConvWx"};
+
+
+///////////// modelWeights ////////////////////////////
+//
+// Weights of models, same order .
+// Type: double
+// 1D array - variable length.
+//
+
+modelWeights = {
+ 0.5,
+ 0.5
+};
+
+///////////// maxAgeHours /////////////////////////////
+//
+// maximum age hours.
+// Maximum age in real time of data compared to current real time in 
+//   order to use the data (hours).
+// Type: double
+//
+
+maxAgeHours = 24;
+
+///////////// triggerFeedbackMinutes //////////////////
+//
+// triggering feedback minutes.
+// Type: double
+//
+
+triggerFeedbackMinutes = 1;
+
+///////////// urlTimeoutMinutes ///////////////////////
+//
+// URL timout minutes.
+// If a URL has produced data at a gen time, but no new lead times 
+//   trigger, it has 'timed out'.  This parameter tells how long to wait 
+//   until declaring a timeout.  It can be fairly big if this is a rare 
+//   event.
+// Type: double
+//
+
+urlTimeoutMinutes = 120;
+
+///////////// urlDisableMinutes ///////////////////////
+//
+// URL disable minutes.
+// If a URL has not produced data at a gen time, but other URls have, 
+//   the URL is declared 'disabled' if this many minutes have elapsed 
+//   between the first data at the gen time from any URL, and the current 
+//   real time.
+// Type: double
+//
+
+urlDisableMinutes = 180;
+
+ ///////////// genTimeProcessHours /////////////////////
+ //
+ // Algorithm will run only on data at these generation time hours.
+ // Type: int
+ // 1D array - variable length.
+ //
+ 
+ genTimeProcessHours = {
+  0,
+  6,
+  12,
+  18
+ };
+
+///////////// encodingType ////////////////////////////
+//
+// Set encoding type.
+// 
+// 
+// Type: enum
+// Options:
+//     ENCODING_INT8
+//     ENCODING_INT16
+//     ENCODING_FLOAT32
+//
+
+encodingType = ENCODING_FLOAT32;

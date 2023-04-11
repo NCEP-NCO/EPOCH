@@ -1,0 +1,280 @@
+/**********************************************************************
+ * TDRP params for GmgsiNcf2Mdv
+ **********************************************************************/
+
+//======================================================================
+//
+// Param file for GmgsiNcf2Mdv.
+//
+//======================================================================
+ 
+///////////// debug ///////////////////////////////////
+//
+// Debug option.
+//
+// If set, debug messages will be printed appropriately.
+//
+//
+// Type: enum
+// Options:
+//     DEBUG_OFF
+//     DEBUG_NORM
+//     DEBUG_VERBOSE
+//
+
+debug = DEBUG_OFF;
+
+///////////// instance ////////////////////////////////
+//
+// Program instance for process registration.
+//
+// This program registers with procmap. This is the instance used for 
+//   registration.
+//
+//
+// Type: string
+//
+
+instance = "globcompLir";
+
+///////////// mode ////////////////////////////////////
+//
+// Operating mode.
+//
+//
+// Type: enum
+// Options:
+//     REALTIME
+//     FILELIST
+//     TIME_INTERVAL
+//
+
+mode = REALTIME;
+
+//======================================================================
+//
+// INPUT DATA.
+//
+//======================================================================
+ 
+///////////// lat_var /////////////////////////////////
+//
+// latitude data.
+//
+//
+// Type: string
+//
+
+lat_var = "lat";
+
+///////////// lon_var /////////////////////////////////
+//
+// longitude data.
+//
+//
+// Type: string
+//
+
+lon_var = "lon";
+
+///////////// sat_data_field //////////////////////////
+//
+// Sat data field name.
+//
+//
+// Type: string
+//
+
+sat_data_field = "data";
+
+///////////// sat_data_units //////////////////////////
+//
+// Satellite data units.
+//
+//
+// Type: string
+//
+
+sat_data_units = "K";
+
+///////////// sat_missing_or_bad //////////////////////
+//
+// Min missing or bad data.
+//
+//
+// Type: float
+//
+
+sat_missing_or_bad = -9999;
+
+///////////// y_dim ///////////////////////////////////
+//
+// y dimension name.
+//
+//
+// Type: string
+//
+
+y_dim = "yc";
+
+///////////// x_dim ///////////////////////////////////
+//
+// x dimension name.
+//
+//
+// Type: string
+//
+
+x_dim = "xc";
+
+///////////// input_dir ///////////////////////////////
+//
+// Input directory.
+//
+//
+// Type: string
+//
+
+input_dir = "$(RAP_DATA_DIR)/EpochOps/raw/gmgsiAws/LIR";
+
+///////////// max_valid_realtime_age_min //////////////
+//
+// Maximum age of file in minutes.
+//
+// Used in REALTIME mode only.
+//
+//
+// Type: int
+//
+
+max_valid_realtime_age_min = 7200;
+
+///////////// ldata_info_avail ////////////////////////
+//
+// Latest data info file available.
+//
+//
+// Type: boolean
+//
+
+ldata_info_avail = TRUE;
+
+///////////// file_quiescence_sec /////////////////////
+//
+// Set wait for file to be written to disk before being served.
+//
+// Used in REALTIME mode only.
+//
+//
+// Type: int
+//
+
+file_quiescence_sec = 0;
+
+///////////// check_input_sec /////////////////////////
+//
+// Set wait for file between checks for new data.
+//
+// Used in REALTIME mode only.
+//
+//
+// Type: int
+//
+
+check_input_sec = 60;
+
+///////////// start_time //////////////////////////////
+//
+// yyyymmddhhMMss.
+//
+// Set for TIME_INTERVAL mode only.
+//
+//
+// Type: string
+//
+
+start_time = "";
+
+///////////// end_time ////////////////////////////////
+//
+// yyyymmddhhMMss.
+//
+// Set for TIME_INTERVAL mode only.
+//
+//
+// Type: string
+//
+
+end_time = "";
+
+///////////// output_proj /////////////////////////////
+//
+// Output projection.
+//
+//
+// Type: struct
+//   typedef struct {
+//      proj_type_t proj_type;
+//        Options:
+//          PROJ_LATLON
+//          PROJ_MERCATOR
+//      double minx;
+//      double miny;
+//      int nx;
+//      int ny;
+//      double dx;
+//      double dy;
+//      double origin_lat;
+//      double origin_lon;
+//   }
+//
+//
+
+output_proj = {
+    proj_type = PROJ_LATLON,
+    minx = -180,
+    miny = -90,
+    nx = 3600,
+    ny = 1800,
+    dx = 0.1,
+    dy = 0.1,
+    origin_lat = -90,
+    origin_lon = -180
+};
+
+//======================================================================
+//
+// OUTPUT DATA.
+//
+//======================================================================
+ 
+///////////// output_data_fieldname ///////////////////
+//
+// Name to assign to output data field.
+//
+//
+// Type: string
+//
+
+output_data_fieldname = "ir";
+
+///////////// output_url //////////////////////////////
+//
+// URL for the output MDV files.
+//
+//
+// Type: string
+//
+
+output_url = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1deg_directFromGmgsi2020/LIR";
+
+///////////// sleep_secs //////////////////////////////
+//
+// Seconds to sleep between data checks.
+//
+//
+// Type: int
+//
+
+sleep_secs = 60;
+

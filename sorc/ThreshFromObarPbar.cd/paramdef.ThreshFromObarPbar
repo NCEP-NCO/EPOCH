@@ -1,0 +1,124 @@
+commentdef {
+  p_header = "ThreshFromObarPbar";
+}
+
+commentdef {
+  p_header = "ThreshFromObarPbar";   	    
+}
+
+paramdef string
+{
+  p_default = "spdbp:://localhost::EpochOps/spdb/CMCE/thresh";
+  p_help = "The triggering SPDB, which is the pbar data";
+} pbarSpdb;
+
+paramdef string
+{
+  p_help = "Spdb with obar data,, input to this app, for precip";
+  p_default = "spdbp:://localhost::EpochOps/CMCE/obar";
+} obarSpdb1;
+
+paramdef string
+{
+  p_help = "Spdb with thresholds for precip, output of this app";
+  p_default = "spdbp:://localhost::EpochOps/CMCE/thresh";
+} thresholdsSpdb1;
+
+paramdef double
+{
+  p_help = "precip coldstart threshold";
+  p_default = 2.0;
+} threshFieldColdstartThreshold1;
+
+typedef struct
+{
+  double obarThresh;
+  double targetBias;
+} ThreshBias_t;
+ 
+paramdef struct ThreshBias_t
+{
+  p_descr = "Precip obar threshold and target bias values";
+  p_help = "obarThresh = Expected Obar precip threshold, should match what is in the obar database\n"
+    "targetBias = value set so | bias - targetBias | is minimized";
+  p_default = {
+    {4.0, 0.0}
+    };
+} obarThreshTargetBias1[];
+
+
+// paramdef double
+// { p_help = "Expected Obar precip thresholds, should match what is in the obar database";
+//   p_default = {4.0};
+// } obarThresh1[];
+
+// paramdef double
+// {
+//   p_default = 0.0;
+//   p_help = "Want | bias - target_bias | to be minimized";
+// } target_bias1;
+
+paramdef string
+{
+  p_help = "Spdb with obar data,, input to this app, for cloudtops";
+  p_default = "spdbp:://localhost::EpochOps/CMCE/obar";
+} obarSpdb2;
+
+paramdef string
+{
+  p_help = "Spdb with thresholds for cloudtops, output of this app";
+  p_default = "spdbp:://localhost::EpochOps/CMCE/thresh";
+} thresholdsSpdb2;
+
+paramdef double
+{
+  p_help = "cloudtop coldstart threshold";
+  p_default = 2.0;
+} threshFieldColdstartThreshold2;
+
+paramdef struct ThreshBias_t
+{
+  p_descr = "Cloudtop obar threshold and target bias values";
+  p_help = "obarThresh = Expected Obar CTH threshold, should match what is in the obar database\n"
+    "targetBias = value set so | bias - targetBias | is minimized";
+  p_default = {
+    {4.0, 0.0}
+    };
+} obarThreshTargetBias2[];
+
+paramdef string
+{
+  p_default = "Tiling_05deg_02overlap_0.5deg.params";
+  p_help = "Parameter file with tiling information";
+} tilingParamFile;
+
+paramdef int
+{
+  p_default = 5;
+  p_help = "Days to backfill at startup.  Look back this many days from now (realtime) or t0 (archive) for gen times that have ensemble model data but have not produced output, and process the ones that have all inputs.  Should be set bigger for cloudtops versions that trigger off of data that lags a few more days behind real time";
+} backfillDaysBack;
+
+paramdef int
+{
+  p_default = 0;
+  p_help = "Number of threads on ensemble member, 0 or 1 for no threading";
+} num_threads;
+
+paramdef boolean
+{
+  p_default = FALSE;
+  p_help = "Set true to see more debugging of internal state";
+} debug_state;
+
+paramdef double
+{
+  p_help = "Maximum days without completing a gen time before outputting what can be output for that gen time, used in realtime";
+  p_default = 2.5;
+} maxIncompleteDays;
+
+paramdef int
+{
+  p_help = "Maximum days back to look for thresholds SPDB data, used to set initial best threshold value";
+  p_default = 30;
+} thresholdsMaxDaysBack;
+

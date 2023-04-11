@@ -1,0 +1,65 @@
+commentdef {
+  p_header = "EnsFcstComb";   	    
+}
+
+paramdef string
+{
+  p_descr = "Input/output field names, any number one or more";
+  p_default = {};
+} fieldNames[];
+  
+paramdef double
+{
+  p_descr = "Weights of models, same order ";
+  p_default = {.5,.5};
+} modelWeights[];
+
+paramdef double
+{
+  p_descr = "maximum age hours";
+  p_help = "Maximum age in real time of data compared to current real time in order to use the data (hours)";
+  p_default = 24.0;
+} maxAgeHours;
+
+paramdef double
+{
+  p_descr = "triggering feedback minutes";
+  p_help = "Triggering mechanism will return from each URL after this number of minutes to tell the handler there has been no new
+ input. Set this fairly small to speed up detection of timeout and disable situations.";
+  p_default = 1.0;
+} triggerFeedbackMinutes;
+
+paramdef double
+{
+  p_descr = "URL timout minutes";
+  p_help = "If a URL has produced data at a gen time, but no new lead times trigger, it has 'timed out'.  This parameter tells ho
+w long to wait until declaring a timeout.  It can be fairly big if this is a rare event";
+  p_default = 60.0;
+} urlTimeoutMinutes;
+
+paramdef double
+{
+  p_descr = "URL disable minutes";
+  p_help = "If a URL has not produced data at a gen time, but other URls have, the URL is declared 'disabled' if this many minute
+s have elapsed between the first data at the gen time from any URL, and the current real time";
+  p_default = 60.0;
+} urlDisableMinutes;
+
+paramdef int
+{
+  p_help = "Algorithm will run only on data at these generation time hours.";
+  p_default = {0,12};
+} genTimeProcessHours[];
+
+
+typedef enum {
+  ENCODING_INT8 =      1,
+  ENCODING_INT16 =     2,
+  ENCODING_FLOAT32 =   5
+} encodingType_t;
+
+paramdef enum encodingType_t {
+  p_default = ENCODING_INT8;
+  p_descr = "Set encoding type.";
+} encodingType;
+

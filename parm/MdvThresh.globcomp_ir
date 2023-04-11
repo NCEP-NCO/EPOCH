@@ -1,0 +1,571 @@
+/**********************************************************************
+ * TDRP params for MdvThresh
+ **********************************************************************/
+
+//======================================================================
+//
+// MdvThresh thresholds MDV data. Data which fail the
+// threshold test are set to missing. Data which pass
+// the threshold may be set to a constant value if desired,
+// effecively creating a boolean pass/fail field.
+//
+// Niles Oien
+//
+// If OneValueMin/Max are set to FALSE, a URL specifying
+// a 2D field can be used to create a gridded threshold comparison.
+//
+//======================================================================
+ 
+///////////// Instance ////////////////////////////////
+//
+// Instance to check in to Procmap with.
+//
+// Set to something unique.
+//
+//
+// Type: string
+//
+
+Instance = "globcomp_ir";
+
+///////////// procmap_register_interval_secs //////////
+//
+// Interval for procmap registration.
+//
+// Increase the value if processing takes a long time. This will prevent 
+//   the auto_restarter from killing and restarting the app.
+//
+// Minimum val: 60
+//
+// Type: int
+//
+
+procmap_register_interval_secs = 60;
+
+///////////// Mode ////////////////////////////////////
+//
+// Operation mode.
+//
+// Archive mode automatically invoked by -interval option.
+//
+//
+// Type: enum
+// Options:
+//     ARCHIVE
+//     REALTIME
+//
+
+Mode = REALTIME;
+
+///////////// MaxRealtimeValidAge /////////////////////
+//
+// Maximum valid age for files.
+//
+// REALTIME mode only.
+//
+//
+// Type: int
+//
+
+MaxRealtimeValidAge = 1800;
+
+///////////// Debug ///////////////////////////////////
+//
+// Set to print debugging messages.
+//
+// Defaults to FALSE.
+//
+//
+// Type: boolean
+//
+
+Debug = FALSE;
+
+///////////// TriggerUrl //////////////////////////////
+//
+// URL to trigger off, typically of the form
+// mdvp:://host.domain:[port]:dir/dir.
+//
+// Program runs when new data appear here.
+//
+//
+// Type: string
+//
+
+TriggerUrl = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1deg_directFromGmgsi2020/LIR";
+
+///////////// SleepAfterTrigger ///////////////////////
+//
+// Seconds to sleep after triggering on an input file.
+//
+// REALTIME mode only.
+//
+//
+// Type: int
+//
+
+SleepAfterTrigger = 0;
+
+///////////// InUrl ///////////////////////////////////
+//
+// URL of the input field.
+//
+// If set to "", will use TriggerUrl.
+//
+//
+// Type: string
+//
+
+InUrl = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1deg_directFromGmgsi2020/LIR";
+
+///////////// InFieldName /////////////////////////////
+//
+// Input field names to process - or use '#2' to indicate field
+// two (fields start at 0 in this case).
+//
+// Must have matching entry in TakeMaximum array (below) for
+// each field name entered.
+//
+//
+// Type: string
+// 1D array - variable length.
+//
+
+InFieldName = {
+ "ir"
+};
+
+///////////// ThreshUrl ///////////////////////////////
+//
+// URL of the field used for thresholding the data.
+//
+// If set to "", will use TriggerUrl.
+//
+//
+// Type: string
+//
+
+ThreshUrl = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1deg_directFromGmgsi2020/LIR";
+
+///////////// ThreshFieldName /////////////////////////
+//
+// Name of threshold field to use from the input file - or use '#2' to 
+//   indicate field two (fields start at 0 in this case).
+//
+// If set to "", will use each input field as its own threshold field.
+//
+//
+// Type: string
+//
+
+ThreshFieldName = "ir";
+
+///////////// ThreshValidSecs /////////////////////////
+//
+// Number of seconds the ThreshUrl is valid.
+//
+//
+// Type: long
+//
+
+ThreshValidSecs = 600;
+
+///////////// OneValueMin /////////////////////////////
+//
+// Use single value minimum thresh or use grid.
+//
+// True to use MinThresh.  If false, set minThreshField to a 2D field.
+//
+//
+// Type: boolean
+//
+
+OneValueMin = TRUE;
+
+///////////// MinThresh ///////////////////////////////
+//
+// Minimum threshold - data must be equal to or
+// greater than this to pass.
+//
+// Set to hugely negative value to have no effect.
+//
+//
+// Type: double
+//
+
+MinThresh = 164;
+
+///////////// MinThreshUrl ////////////////////////////
+//
+// URL of the 2D field used to set minimum threshold.
+//
+// Must be a 2D field on the same grid as the threshold field.
+//
+//
+// Type: string
+//
+
+MinThreshUrl = "";
+
+///////////// MinThreshFieldName //////////////////////
+//
+// Name of minimum threshold field to use from the input file - or use 
+//   '#2' to indicate field two (fields start at 0 in this case).
+//
+// Must be a 2D field on the same grid as the threshold field.
+//
+//
+// Type: string
+//
+
+MinThreshFieldName = "";
+
+///////////// OneValueMax /////////////////////////////
+//
+// Use single value maximum thresh or use grid.
+//
+// True to use MaxThresh.  If false, set maxThreshField to a 2D field.
+//
+//
+// Type: boolean
+//
+
+OneValueMax = TRUE;
+
+///////////// MaxThresh ///////////////////////////////
+//
+// Maximum threshold - data must be equal to or
+// less than this to pass.
+//
+// Set to hugely positive value to have no effect.
+//
+//
+// Type: double
+//
+
+MaxThresh = 5000;
+
+///////////// MaxThreshUrl ////////////////////////////
+//
+// URL of the 2D field used to set maximum threshold.
+//
+// Must be a 2D field on the same grid as the threshold field.
+//
+//
+// Type: string
+//
+
+MaxThreshUrl = "";
+
+///////////// MaxThreshFieldName //////////////////////
+//
+// Name of maximum threshold field to use from the input file - or use 
+//   '#2' to indicate field two (fields start at 0 in this case).
+//
+// Must be a 2D field on the same grid as the threshold field.
+//
+//
+// Type: string
+//
+
+MaxThreshFieldName = "";
+
+///////////// ThreshMissing ///////////////////////////
+//
+// Flag indicating whether to threshold out grid points where data is 
+//   missing in the threshhold field.
+//
+//
+// Type: boolean
+//
+
+ThreshMissing = FALSE;
+
+///////////// ReplacePassValues ///////////////////////
+//
+// Set this to replace values that pass the thresholding
+// with a contsant value specified by PassValue.
+//
+// If FALSE the data values that pass are sent to the output.
+//
+//
+// Type: boolean
+//
+
+ReplacePassValues = FALSE;
+
+///////////// PassValue ///////////////////////////////
+//
+// Value to use for data points that pass the threshold test.
+//
+// Has effect only if ReplacePassValues is TRUE.
+//
+//
+// Type: double
+//
+
+PassValue = 1;
+
+///////////// ReplaceFailValues ///////////////////////
+//
+// Set this to replace values that fail the thresholding
+// with a contsant value specified by FailValue.
+//
+// If FALSE the data values that fail set to missing.
+//
+//
+// Type: boolean
+//
+
+ReplaceFailValues = FALSE;
+
+///////////// FailValue ///////////////////////////////
+//
+// Value to use for data points that fails the threshold test.
+//
+// Has effect only if ReplaceFailValues is TRUE.
+//
+//
+// Type: double
+//
+
+FailValue = 0;
+
+///////////// OutUrl //////////////////////////////////
+//
+// Output mdv URL, typically of the form
+// mdvp:://host.domain:[port]:dir/dir.
+//
+// Derived satellite fields are written here.
+//
+//
+// Type: string
+//
+
+OutUrl = "mdvp:://localhost::EpochOps/mdv/satellite/globcomp_0.1deg_directFromGmgsi2020/thresh_ir";
+
+///////////// OutFieldName ////////////////////////////
+//
+// Output field names to process.
+//
+// Must be one output name for each input field.
+//
+//
+// Type: string
+// 1D array - variable length.
+//
+
+OutFieldName = {
+ "ir"
+};
+
+///////////// Units ///////////////////////////////////
+//
+// Output units for each field.
+//
+// Must be output units for each input field.
+//
+//
+// Type: string
+// 1D array - variable length.
+//
+
+Units = {
+ "DegK"
+};
+
+///////////// output_encoding_type ////////////////////
+//
+// Output encoding type.
+//
+//
+// Type: enum
+// Options:
+//     ENCODING_INT8
+//     ENCODING_INT16
+//     ENCODING_FLOAT32
+//
+
+output_encoding_type = ENCODING_FLOAT32;
+
+//======================================================================
+//
+//  ------------ GRID PARAMETERS --------
+// These specify the grid on which the
+// computations will be performed.
+// These are used only if RemapGrid is set
+// to TRUE. If RemapGrid is FALSE then it is assumed
+// that the fields are already on the same grid.
+//
+//======================================================================
+ 
+///////////// RemapGrid ///////////////////////////////
+//
+// Set to TRUE to remap the data - useful if visible is at
+// four times the resolution of the IR channels.
+//
+// Defaults to FALSE.
+//
+//
+// Type: boolean
+//
+
+RemapGrid = FALSE;
+
+///////////// grid_origin_lat /////////////////////////
+//
+// Latitude of grid origin.
+//
+// Must be specified.
+//
+// Minimum val: -90
+// Maximum val: 90
+//
+// Type: double
+//
+
+grid_origin_lat = 34;
+
+///////////// grid_origin_lon /////////////////////////
+//
+// Longitude of grid origin.
+//
+// Must be specified.
+//
+// Minimum val: -180
+// Maximum val: 180
+//
+// Type: double
+//
+
+grid_origin_lon = -77;
+
+///////////// grid_rotation ///////////////////////////
+//
+// Rotation (in degrees) of grid from true north.
+//
+// Usually 0 - applied to flat earth only.
+//
+// Minimum val: -360
+//
+// Type: double
+//
+
+grid_rotation = 0;
+
+///////////// grid_lat1 ///////////////////////////////
+//
+// First true latitude for LAMBERT projection.
+//
+// Applies only to LAMBERT.
+//
+// Minimum val: -90
+// Maximum val: 90
+//
+// Type: double
+//
+
+grid_lat1 = 25.1;
+
+///////////// grid_lat2 ///////////////////////////////
+//
+// Second true latitude for LAMBERT projection.
+//
+// Applies only to LAMBERT.
+//
+// Minimum val: -90
+// Maximum val: 90
+//
+// Type: double
+//
+
+grid_lat2 = 25;
+
+///////////// grid_projection /////////////////////////
+//
+// Projection type of grid.
+//
+// Projections currently supported are FLAT, LATLON and LAMBERT.
+//
+//
+// Type: enum
+// Options:
+//     FLAT
+//     LATLON
+//     LAMBERT
+//
+
+grid_projection = FLAT;
+
+///////////// grid_nx /////////////////////////////////
+//
+// Number of cells in the grid in X.
+//
+// Minimum val: 1
+//
+// Type: int
+//
+
+grid_nx = 100;
+
+///////////// grid_ny /////////////////////////////////
+//
+// Number of cells in the grid in Y.
+//
+// Minimum val: 1
+//
+// Type: int
+//
+
+grid_ny = 100;
+
+///////////// grid_dx /////////////////////////////////
+//
+// Size of the cells in the output grid in X.
+//
+//
+// Type: float
+//
+
+grid_dx = 1;
+
+///////////// grid_dy /////////////////////////////////
+//
+// Size of the cells in the output grid in Y.
+//
+//
+// Type: float
+//
+
+grid_dy = 1;
+
+///////////// grid_minx ///////////////////////////////
+//
+// X at grid's lower left corner.
+//
+// Units for this parameter will depend upon the output grid_projection.
+//
+//
+// Type: float
+//
+
+grid_minx = 0;
+
+///////////// grid_miny ///////////////////////////////
+//
+// Y at grid's lower left corner.
+//
+// Units for this parameter will depend upon the output grid_projection.
+//
+//
+// Type: float
+//
+
+grid_miny = 0;
+
+//======================================================================
+//
+// ------ End of grid parameters. .
+//
+//======================================================================
+ 

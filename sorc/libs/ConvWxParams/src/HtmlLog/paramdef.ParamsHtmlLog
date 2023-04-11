@@ -1,0 +1,49 @@
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/* ** Copyright UCAR (c) 1992 - 2010 */
+/* ** University Corporation for Atmospheric Research(UCAR) */
+/* ** National Center for Atmospheric Research(NCAR) */
+/* ** Research Applications Laboratory(RAL) */
+/* ** P.O.Box 3000, Boulder, Colorado, 80307-3000, USA */
+/* ** 2010/10/7 23:12:42 */
+/* *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
+/**********************************************************
+ * paramdef.HtmlLog
+ *
+ * This file contains the TDRP parameter definitions for params 
+ * to set up HtmlLogging
+ */
+
+commentdef
+{
+  p_header = "Html Params";
+  p_text =   "--------where to write html --------------------------------\n"
+             "--------how far back in time to show values ----------------";
+};
+
+paramdef string
+{
+  p_descr = "path for HTML logging, empty for none";
+  p_help = "HTML written to <html_path>/<html_subdir>";
+  p_default = ".";
+} html_path;
+
+paramdef string
+{
+  p_descr = "subdir name for HTML, empty for none";
+  p_help = "HTML written to <html_path>/<html_subdir>/<>.html";
+  p_default = "Blending";
+} html_subdir;
+
+paramdef int
+{
+  p_descr = "hours back in main html logfile";
+  p_help = "lines in html current file older than this are removed";
+  p_default = 8;
+} html_hours_back;
+
+commentdef
+{
+  p_header = "End of Html Params";
+  p_text =   "";
+};
+

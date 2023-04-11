@@ -1,0 +1,175 @@
+#ifdef NOT
+//----------------------------------------------------------------------
+bool ThreshFromObarPbarMgr::_processGenLead(const time_t &genTime,
+				       const ForecastState::LeadStatus_t s,
+				       LeadtimeThreadData &ltData)
+{
+  int leadTime = s.leadSeconds;
+  LOG(DEBUG) << "----- Processing ---- " << DateTime::strn(genTime) << " + " << leadTime;
+  FcstGrid egrid;
+  if (!_loadExampleInputData(genTime, leadTime, egrid))
+  {
+    return false;
+  }
+  if (!ltData.setupCountSums(egrid))
+  {
+    return false;
+  }
+
+  // now loop through the ensembles
+  for (size_t i=0; i<_params._modelInput.size(); ++i)
+  {
+    _processEnsembleMember(genTime, leadTime, i, ltData);
+  }
+  
+  if (!ltData.agridWasModified())
+  {
+    LOG(ERROR) << "No data at all, nothing possible";
+    return false;
+  }
+  LOG(DEBUG_VERBOSE) << "Normalizing results";
+  ltData.normalizeCountSums();
+
+// #ifdef NOTYET
+//   // special debugging
+//   MultiGrid mg;
+//   int i=0;
+//   for (double thresh = _params.pThreshMin; thresh <= _params.pThreshMax;
+//        thresh += _params.pThreshDelta,++i)
+//   {
+//     Grid g = _aGrid[i]->dataGridRef();
+//     char buf[100];
+//     sprintf(buf, "%s-%04.1lf", g.getName().c_str(), thresh);
+//     g.changeName(buf);
+//     mg.append(g);
+//   }
+//   MetaData md;
+//   InterfaceIO::write(genTime, leadTime, "mdvp:://localhost::EpochOps/dave",
+// 		     _params.proj, mg, md);
+// #endif
+
+  return true;
+}
+
+//----------------------------------------------------------------------
+void ThreshFromObarPbarMgr::_processEnsembleMember(const time_t &genTime,
+					      int leadTime,
+					      int ensembleIndex,
+					      LeadtimeThreadData &ltData)
+{
+  ltData.updateAdditionalInputs(genTime, leadTime);
+  MultiFcstGrid mInGrid;
+  string url = _params._modelInput[ensembleIndex].pUrl;
+  LOG(DEBUG_VERBOSE) << "Loading model data from " << url;
+  if (!InterfaceIO::loadMultiFcst(genTime, leadTime, _params._proj, 
+				  url, _params._inputFieldNames,
+				  _params._modelInput[ensembleIndex].pRemap,
+				  mInGrid))
+  {
+    LOG(WARNING) << "Failure to load fcst data at "
+		  << DateTime::strn(genTime) << "+" << leadTime  << " from url " << url;
+    return;
+  }
+
+  LOG(DEBUG_VERBOSE) << "Got model data at " << DateTime::strn(genTime)
+		     << "+" << leadTime << " from url " << url;
+  const Grid *thresholdedGrid = mInGrid.constGridPtr(_params._inputThresholdedField);
+
+  if (!ltData.setEnsembleGridPointers(mInGrid))
+  {
+    LOG(ERROR) << "Could not set additional input pointers to ensemble data";
+    return;
+  }
+
+  for (int gridIndex=0; gridIndex<thresholdedGrid->getNdata(); ++gridIndex)
+  {
+    double thresholdedValue;
+
+    if (_gotAllValues(gridIndex, *thresholdedGrid, ltData, thresholdedValue))
+    {
+      ltData.updateCountSums(gridIndex, thresholdedValue);
+    }
+  }
+}
+
+// //----------------------------------------------------------------------
+// bool ThreshFromObarPbarMgr::_setupCountSums(const time_t &genTime, int leadTime,
+// 				       const FcstGrid &egrid)
+// {
+//   int i=0;
+//   for (double thresh = _params._threshMin; thresh <= _params._threshMax;
+//        thresh += _params._threshDelta, i++)
+//   {
+//     if (!_aGridSet)
+//     {
+//       // use that to initialize for all thresholds
+//       _aGrid.push_back(new AveragingGrids(_params._inputThresholdedField, egrid));
+//     }
+//     else
+//     {
+//       _aGrid[i]->initialize();
+//     }
+//   }
+//   _aGridSet = true;
+//   _aGridModified = false;
+//   return true;
+// }
+
+// //-----------------------------------------------------------------------
+// void ThreshFromObarPbarMgr::_updateCountSums(int gridIndex, double thresholdedValue,
+// 					AdditionalInputs &additionalInputs)
+// {
+//   int i=0;
+//   _thread.lockForIO();
+//   _aGridModified = true;
+//   _thread.unlockAfterIO();
+//   for (double thresh = _params._threshMin; thresh <= _params._threshMax;
+//        thresh += _params._threshDelta,++i)
+//   {
+//     _thread.lockForIO();
+//     _aGrid[i]->incrementCount(gridIndex);
+//     _thread.unlockAfterIO();
+//     if (_params.passesTests(thresholdedValue, thresh) &&
+// 	additionalInputs.passesTests())
+//     {
+//       _thread.lockForIO();
+//       _aGrid[i]->increment(gridIndex);
+//       _thread.unlockAfterIO();
+//     }
+//   }
+// }	
+
+// //----------------------------------------------------------------------
+// void ThreshFromObarPbarMgr::_normalizeCountSums(void)
+// {
+//   int i=0;
+//   for (double thresh = _params._threshMin; thresh <= _params._threshMax;
+//        thresh += _params._threshDelta,++i)
+//   {
+//     _aGrid[i]->normalize();
+//   }
+// }
+
+//----------------------------------------------------------------------
+bool
+ThreshFromObarPbarMgr::_loadExampleInputData(const time_t &genTime,
+					int leadTime,
+					FcstGrid &grid) const
+{
+  InterfaceLL::doRegister("Loading data");
+  if (!InterfaceIO::loadFcst(genTime, leadTime, _params._proj,
+			     _params._modelInput[0].pUrl,
+			     _params._inputThresholdedField,
+			     _params._modelInput[0].pRemap,
+			     grid))
+  {
+    LOG(ERROR) << "Failure to load fcst data for gen "
+	       << DateTime::strn(genTime) << " lead " << leadTime 
+	       << " at url " << _params._modelInput[0].pUrl;
+    return false;
+  }
+  return true;
+}
+
+#endif
+
