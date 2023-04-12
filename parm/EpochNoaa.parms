@@ -60,10 +60,10 @@ fileNamingLIR = GLOBCOMPLIR_nc.
 globcompDataPathLIR = $DCOMROOT
 
 # for a full file path, index to YYYYMMDD
-globcompLirYmdIndex = 21
+globcompLirYmdIndex = 22
 
 # for a full file path, index to HH
-globcompLirHourIndex = 65
+globcompLirHourIndex = 66
     
 #----------------------------------------------------------------------------
 [gfs]
@@ -117,13 +117,13 @@ cmorph2AccessModeWcoss = 1
 #cmorph2Pattern = $DCOMROOT/YYYYMMDD/cmorph2/CMORPH2_0.25deg-30min_SYYYYMMDDHHMM_EYYYYMMDDHHmm.RT.nc
 
 # for a full file path, index to YYYYMMDD
-cmorph2YmdIndex = 21
+cmorph2YmdIndex = 22
 
 # for a full file path, index to HH
-cmorph2HourIndex = 69
+cmorph2HourIndex = 70
 
 # for a full file path, index to MM
-cmorph2MinuteIndex = 71
+cmorph2MinuteIndex = 72
 
 # the number of minutes between cmorph2 data files
 cmorph2FrequencyMinutes = 30

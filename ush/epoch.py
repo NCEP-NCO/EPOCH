@@ -2008,8 +2008,8 @@ def runEpoch(ymdh, parmfile):
   os.system(cmd)
   
   # Temporary fix to delete tmpnwprd
-  cmd='rm -rf %s/tmpnwprd' % (my_env['PACKAGEROOT'])
-  os.system(cmd)
+  #cmd='rm -rf %s/tmpnwprd' % (my_env['PACKAGEROOT'])
+  #os.system(cmd)
 
   return retStat
 

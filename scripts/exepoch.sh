@@ -19,7 +19,7 @@ fi
 
 if [[ $attempts -gt 5 ]] && [ ! -d $CMCE_MODEL_DIR ]; then
     msg= "WARNING: $CMCE_MODEL_DIR still not available after waiting five minutes... proceeding without..."
-    echo "$msg" | mail.py -c $maillist
+    echo "$msg" | mail.py -c $MAILTO
 fi
 
 let attempts=1

@@ -39,7 +39,7 @@ export LOGepoch=${DATA}/log
 #export KEEPepoch=${SCRIPTSepoch}
 export WORKSPACE=${DATA}/workspace
 
-export maillist=${maillist:-'nco.spa@noaa.gov,alex.korner@noaa.gov'}
+export MAILTO=${MAILTO:-'nco.spa@noaa.gov,alex.korner@noaa.gov'}
 
 # Provide access to NCO shared executables
 #export HOMEnco=${HOMEnco:-${PACKAGEROOT}/nco_shared.${nco_shared_ver}}
@@ -67,7 +67,7 @@ export gfsPattern=${COMINgfs}/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2.0p25.fLLL
 export gfsPatternb=${COMINgfs}/gfs.YYYYMMDD/HH/atmos/gfs.tHHz.pgrb2b.0p25.fLLL
 
 i=-6
-while [ ! -s $COMINstate ] || [ ! -s $COMINinputstate]
+while [ ! -s $COMINstate ] || [ ! -s $COMINinputstate ]
 do
 	
 	i=$((i-6))
@@ -88,7 +88,7 @@ do
 	elif [[ $i -lt -168 ]]
 	then
 		msg='WARNING: NO STATE OR INPUTSTATE FILE'
-		echo "$msg" | mail.py -c $maillist
+		echo "$msg" | mail.py -c $MAILTO
 		#err_exit
 		break	
 	fi
