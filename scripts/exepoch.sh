@@ -18,8 +18,8 @@ if [ $cyc -eq 00 ] || [ $cyc -eq 12 ]; then
 fi
 
 if [[ $attempts -gt 5 ]] && [ ! -d $CMCE_MODEL_DIR ]; then
-    msg= "WARNING: $CMCE_MODEL_DIR still not available after waiting five minutes... proceeding without..."
-    echo "$msg" | mail.py -c $MAILTO
+    msg="WARNING: $CMCE_MODEL_DIR still not available after waiting five minutes... proceeding without..."
+    echo "$msg" | mail.py -s "EPOCH - WARNING: CMCE data not available" -c $MAILTO
 fi
 
 let attempts=1
@@ -37,7 +37,7 @@ while [ $attempts -le 50 ]; do
 
 done
 if [[ $attempts -gt 50 ]] && [ ! -d $GEFSA_MODEL_DIR ]; then
-    msg= "$GEFSA_MODEL_DIR still not available after waiting fifty minutes... exiting"
+    msg="$GEFSA_MODEL_DIR still not available after waiting fifty minutes... exiting"
     err_exit
 fi
 

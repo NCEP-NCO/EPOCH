@@ -109,7 +109,7 @@ def setupDoubleEnv(envName, envNameActual, comoutPath, workspace, my_env, debug)
     print("Set env var for ", envNameActual, " to ", name)
   i = name.find(comoutPath)
   if i != 0:
-    print("ERROR ", envName, " = ", name,  " did not have ", comoutPath)
+    print("WARNING: ", envName, " = ", name,  " did not have ", comoutPath)
     return False
   w = name.replace(comoutPath, workspace)
   my_env[envName] = w
@@ -230,26 +230,44 @@ def recursiveCopy(fromPath, toPath):
   os.chdir(cwd)
 
 #----------------------------------------------------------------------------
-def recursiveCopyMdvFcst(topFromPath, topToPath, subpath, yyyymmdd, hh):
-  print("Recursively copying from ", topFromPath, " to " , topToPath)
+def recursiveCopyMdvFcst(topFromPath, topToPath, subpath, yyyymmdd, hh, debug=False):
+  print("Recursively copying from ", topFromPath, " to " , topToPath, "ymd=", yyyymmdd, "hh=", hh)
+  if not os.path.exists(topFromPath):
+    if debug:
+      print("WARNING: ", topFromPath, " does not exist")
+    return False
+  tps = topFromPath + "/" + subpath
+  if not os.path.exists(tps):
+    if debug:
+      print("WARNING: ", tps, " does not exist")
+    return False
+
   fp = tarfile.open(topFromPath + '/tmp.tar', 'w')
   cwd = os.getcwd()
   os.chdir(topFromPath)
   subp = subpath + "/" + yyyymmdd + "/g_" + hh + "0000"
-  print("Recursively copying: subpath = ", subp)
-  fp.add(subp)
-  fp.close()
-  shutil.move(topFromPath + "/tmp.tar", topToPath + "/tmp.tar")
-  os.chdir(topToPath)
-  fp = tarfile.open('./tmp.tar', 'r')
-  fp.extractall()
-  fp.close()
-  os.remove('./tmp.tar')
+  if os.path.exists(topFromPath + "/" + subp):
+    print("Recursively copying: subpath = ", subp)
+    fp.add(subp)
+    fp.close()
+    makeDirIfNeeded(topToPath)
+    shutil.move(topFromPath + "/tmp.tar", topToPath + "/tmp.tar")
+    os.chdir(topToPath)
+    fp = tarfile.open('./tmp.tar', 'r')
+    fp.extractall()
+    fp.close()
+    os.remove('./tmp.tar')
+  else:
+    if debug:
+      print("No files to copy from ", subp)
+    os.remove(topFromPath + '/tmp.tar')
+
   os.chdir(cwd)
+  return True
 
 #----------------------------------------------------------------------------
 def recursiveCopyMdvEnsFcst(model, topFromPath, topToPath, subpath, yyyymmdd, hh):
-  print("Recursively copying from ", topFromPath, " to " , topToPath)
+  print("Recursively copying from ", topFromPath, " to " , topToPath, "ymd=", yyyymmdd, "hh=", hh)
   n = 20
   if model == "CMCE":
     n = 20
@@ -259,28 +277,46 @@ def recursiveCopyMdvEnsFcst(model, topFromPath, topToPath, subpath, yyyymmdd, hh
     print("ERROR model not known ", model)
     return False
     
+  if not os.path.exists(topFromPath):
+    print("WARNING: in recursive copy, ", topFromPath, " does not exist")
+    return False;
+  tps = topFromPath + "/" + subpath
+  if not os.path.exists(tps):
+    print("WARNING: in recursive copy, ", tps, " does not exist")
+    return False;
+
   ens = []
   for i in range(1,n+1):
     ens.append('gep%02d' % i)
     
+  added = False
   fp = tarfile.open(topFromPath + '/tmp.tar', 'w')
   cwd = os.getcwd()
   os.chdir(topFromPath)
   for e in ens:
     subp = subpath + "/" + e + "/" + yyyymmdd + "/g_" + hh + "0000"
-    print("Recursively copying: subpath = ", subp)
-    fp.add(subp)
+    if os.path.exists(topFromPath + "/" + subp):
+      added = True
+      print("Recursively copying: subpath = ", subp)
+      fp.add(subp)
   fp.close()
-  shutil.move(topFromPath + "/tmp.tar", topToPath + "/tmp.tar")
-  os.chdir(topToPath)
-  fp = tarfile.open('./tmp.tar', 'r')
-  fp.extractall()
-  fp.close()
-  os.remove('./tmp.tar')
+  if added:
+    makeDirIfNeeded(topToPath)
+    shutil.move(topFromPath + "/tmp.tar", topToPath + "/tmp.tar")
+    os.chdir(topToPath)
+    fp = tarfile.open('./tmp.tar', 'r')
+    fp.extractall()
+    fp.close()
+    os.remove('./tmp.tar')
+  else:
+    print("Warning no files existed, nothing copied to ", topToPath)
+    os.remove(topFromPath + '/tmp.tar')
+
   os.chdir(cwd)
+  return True
 
 #----------------------------------------------------------------------------
-def copyMdvFcst2(topInput, topOutput, subpath, yyyymmdd, hh, leadhour_s, eparms, my_env):
+def copyMdvFcst2(topInput, topOutput, subpath, yyyymmdd, hh, leadhour_s):
   # copy a single file
   fullsubpath = subpath + "/" + yyyymmdd + "/g_" + hh + "0000"
   lt = int(leadhour_s)
@@ -297,7 +333,7 @@ def copyMdvFcst2(topInput, topOutput, subpath, yyyymmdd, hh, leadhour_s, eparms,
   shutil.copy(fullname, outPath)
   
 #----------------------------------------------------------------------------
-def copyMdvFcst(topInput, topOutput, fullPath, duplicatorInstance, ymdh, yyyymmdd, hh, eparms, my_env):
+def copyMdvFcst(topInput, topOutput, fullPath, yyyymmdd, hh):
   os.system('date')
   subp = fullPath[len(topInput)+1:]
   recursiveCopyMdvFcst(topInput, topOutput, subp, yyyymmdd, hh)
@@ -853,7 +889,7 @@ def runGfs(ymdh, eparms, my_env):
       # it should have yyyymmdd and hh should equal HH in the file name
       # parse out the lead hour 3 digits and can form MDV file name
       leadhour_s = f[-3:]
-      copyMdvFcst2(my_env['WORKSPACE'], my_env['COMOUT'], "mdv/model/gfs_0p25a",  yyyymmdd, hh, leadhour_s, eparms, my_env)
+      copyMdvFcst2(my_env['WORKSPACE'], my_env['COMOUT'], "mdv/model/gfs_0p25a",  yyyymmdd, hh, leadhour_s)
       estate._gfsaLastGrib2toMdv = f
       estate.write(my_env['workspace_state'])#eparms._epochStateFile)
       estate.write(my_env['COMOUTrestartS'])
@@ -881,7 +917,7 @@ def runGfs(ymdh, eparms, my_env):
     for f in fnames:
       leadhour_s = f[-3:]
       doCommandWithParmFileAndFileEnsemble("Grib2toMdv", "gfs_0.25b", pathToDataB, f, '01', '01', eparms, my_env)
-      copyMdvFcst2(my_env['DATA'] + '/EpochOps', my_env['COMOUTrestart'], "mdv/model/gfs_0.25b",  yyyymmdd, hh, leadhour_s, eparms, my_env)
+      copyMdvFcst2(my_env['DATA'] + '/EpochOps', my_env['COMOUTrestart'], "mdv/model/gfs_0.25b",  yyyymmdd, hh, leadhour_s)
       estate._gfsbLastGrib2toMdv = f
       estate.write(my_env['workspace_state'])#eparms._epochStateFile)
       estate.write(my_env['COMOUTrestartS'])
@@ -893,7 +929,7 @@ def runGfs(ymdh, eparms, my_env):
   if estate._gfsLastDone == "Grib2toMdv.b":
     # merge now
     doCommandWithStartEnd("MdvMerge2", "gfs_0.25", ymdh, eparms, my_env)
-    copyMdvFcst(my_env['WORKSPACE'], my_env['COMOUT'], my_env['COMOUTmerged'], 'merged_gfs', ymdh, yyyymmdd, hh, eparms, my_env)
+    copyMdvFcst(my_env['WORKSPACE'], my_env['COMOUT'], my_env['COMOUTmerged'], yyyymmdd, hh)
     estate._gfsLastDone = "MdvMerge.gfs"
     estate.write(my_env['workspace_state'])#eparms._epochStateFile)
     estate.write(my_env['COMOUTrestartS'])
@@ -1023,7 +1059,7 @@ def processGoodLir(estate, inputState, ymdh, ymdh_model, LirYmdh, eparms, my_env
   elif ymdh_minus1 not in LirYmdh and ymdh_minus2 in LirYmdh:
     runNesdis(ymdh_model, ymdh_minus2, "missing", ymdh, eparms, my_env)
   else:
-    runNesdis("missing", "missing", ymdh, eparms, my_env)
+    runNesdis(ymdh_model, "missing", "missing", ymdh, eparms, my_env)
 
   # not doing partial stuff for thresholds, if we get past
   # LIR and cmorph processing the thresholds will have updated for sure
@@ -1275,10 +1311,10 @@ def checkGfs(ymdh, toldest, tnewest, eparms, my_env):
     if ymdh in str(goodGfsbYmdh):
       goodGfs.append(ymdh)
     else:
-      print("WARNING ", ymdh, " not in GFSb only in GFSa")
+      print("WARNING: ", ymdh, " not in GFSb only in GFSa")
   for ymdh in goodGfsbYmdh:
     if not ymdh in str(goodGfsaYmdh):
-      print("WARNING ", ymdh, " not in GFSa only in GFSb")
+      print("WARNING: ", ymdh, " not in GFSa only in GFSb")
   goodGfs.sort()
   
   inputState = epochinputstate.EpochInputState()
@@ -1466,7 +1502,10 @@ def convertCmce(ymdh, eparms, estate, my_env):
   
   print("Converting ", lenKeep, " of ", lenAll, " CMCE files from Grib2 to Mdv")
   if len(files)==0:
+      # the case of being called with no CMCE data availabled..
+      # no change to estate here..handle in calling routine
       print('WARNING: Missing valid CMCE data for %s' %my_env['PDY'])
+      return False
   for f in files:
     if f[0:7] == eparms._cmceDataPath3:
       ensemName = f[4:9]
@@ -1475,6 +1514,7 @@ def convertCmce(ymdh, eparms, estate, my_env):
 
   estate._cmceLastDone = "Grib2toMdv"
   estate.write(my_env['workspace_state'])#eparms._epochStateFile)
+  return True
 
 #----------------------------------------------------------------------------
 def convertGefs(ymdh, eparms, estate, my_env):
@@ -1533,19 +1573,28 @@ def runCmce(ymdh, eparms, my_env):
     estate._cmceLastDone = ""
     estate.write(my_env['workspace_state'])#eparms._epochStateFile)
     estate.write(my_env['COMOUTrestartS'])#eparms._epochStateFile)
-    
+
   if estate._cmceLastDone == "":
-    convertCmce(ymdh, eparms, estate, my_env)
-    # read back in state file which was changed by convertCmce, write to comoutrestart
-    estate = epochstate.EpochState()
-    estate.readOrCreate(my_env['workspace_state'])#eparms._epochStateFile)
-    estate._cmceLastDone = "Grib2toMdv"
-    # write the MDV ensemble model data to COMOUTrestartS
-    topPath = my_env['DATA'] + '/EpochOps'
-    subpath = 'mdv/model/cmce'
-    recursiveCopyMdvEnsFcst("CMCE", topPath, my_env['COMOUTrestart'], subpath, yyyymmdd, hh)
-    estate.write(my_env['workspace_state'])#eparms._epochStateFile)
-    estate.write(my_env['COMOUTrestartS'])#eparms._epochStateFile)
+    if convertCmce(ymdh, eparms, estate, my_env):
+      # read back in state file which was changed by convertCmce, write to comoutrestart
+      estate = epochstate.EpochState()
+      estate.readOrCreate(my_env['workspace_state'])#eparms._epochStateFile)
+      estate._cmceLastDone = "Grib2toMdv"
+
+      # write the MDV ensemble model data to COMOUTrestartS
+      topPath = my_env['DATA'] + '/EpochOps'
+      subpath = 'mdv/model/cmce'
+      recursiveCopyMdvEnsFcst("CMCE", topPath, my_env['COMOUTrestart'], subpath, yyyymmdd, hh)
+      estate.write(my_env['workspace_state'])#eparms._epochStateFile)
+      estate.write(my_env['COMOUTrestartS'])#eparms._epochStateFile)
+
+    else:
+      # the case of no CMCE data at all, so skip right over the remaining processing steps
+      # fake it by saying PbarCompute (the last step) is done
+      print("No CMCE data found for ", ymdh, " skip CMCE processing")
+      estate._cmceLastDone == "PbarCompute"
+      estate.write(my_env['workspace_state'])#eparms._epochStateFile)
+      estate.write(my_env['COMOUTrestartS'])#eparms._epochStateFile)
 
   if estate._cmceLastDone == "Grib2toMdv":
     doCommandWithInterval("PrecipAccumCalc", "cmce", ymdh, eparms, my_env)
@@ -1695,7 +1744,7 @@ def checkForPartial(ymdh, estate, workspace, comoutPath, my_env):
   isPartial = False
   if estate._currentPartial:
     if estate._currentPartial != ymdh:
-      print("WARNING, partial run from previous time was aborted do not finish previous ymdh:", estate._currentPartial)
+      print("WARNING: partial run from previous time was aborted do not finish previous ymdh:", estate._currentPartial)
       estate.clearPartial()
       estate.start(ymdh)
       estate.write(my_env['workspace_state'], False)#eparms._epochStateFile)
@@ -1711,7 +1760,7 @@ def checkForPartial(ymdh, estate, workspace, comoutPath, my_env):
     print("Restarting a partially completed run now for ", estate._currentPartial)
     
     if not os.path.exists(workspace):
-      print("WARNING restarting a partially completed run, but no workspace ", workspace, " so need to redo entire run")
+      print("WARNING: restarting a partially completed run, but no workspace ", workspace, " so need to redo entire run")
       makeDirIfNeeded(workspace)
       isPartial = false
       estate.clearPartial()
@@ -1719,7 +1768,7 @@ def checkForPartial(ymdh, estate, workspace, comoutPath, my_env):
       estate.write(my_env['workspace_state'], False)#eparms._epochStateFile)
       estate.write(my_env['COMOUTrestartS'])
     if not os.path.exists(comoutPath):
-      print("WARNING restarting a partially completed run, but no output directory ", comout, " may have missing results")
+      print("WARNING: restarting a partially completed run, but no output directory ", comout, " may have missing results")
       makeDirIfNeeded(comoutPath)
 
   return isPartial
@@ -1750,8 +1799,6 @@ def repopulateWorkspace(ymdh, estate, isPartial, comoutPath, workspace, comoutHe
   # so that LIR will find something to work with in either case
   previousYmdMdv = [my_env['PDYm3'],my_env['PDYm2'], my_env['PDYm1'], my_env['PDY']]
 
-  #print(previousYmd)
-  
   # sort these previous ones from oldest to newest, NOTE this MUST be done oldest to newest so that SPDB will update correctly.
   previousYmd.reverse()
 
@@ -1780,7 +1827,7 @@ def repopulateWorkspace(ymdh, estate, isPartial, comoutPath, workspace, comoutHe
 #----------------------------------------------------------------------------
 def runEpoch(ymdh, parmfile):
 
-  print("Starting exepoch-7.py for ", ymdh)
+  print("Starting epoch.py for ", ymdh)
 
   my_env = os.environ.copy()
   workspace = my_env['WORKSPACE']
@@ -1837,53 +1884,36 @@ def runEpoch(ymdh, parmfile):
   # check for crash
   if os.path.exists(my_env['COMINrestart']):
     # yes crash, copy state files from restart area to workspace
-    estate.readOrCreate(my_env['COMINrestart']+'/Epoch.state')
-    print('Copying %s/Epoch.state into workspace' % (my_env['COMINrestart']))
-    cmd='cpreq %s/Epoch.state %s' % (my_env['COMINrestart'], workspace)
+    estate.readOrCreate(my_env['COMINrestartS'])
+    print('Copying %s into workspace' % (my_env['COMINrestartS']))
+    cmd='cpreq %s %s' % (my_env['COMINrestartS'], workspace)
     os.system(cmd)
     #read after copying in
     estate.readOrCreate(my_env['workspace_state'])
 
-    print('Copying %s/EpochInputs.state into workspace' % (my_env['COMINrestart']))
-    cmd='cpreq %s/EpochInputs.state %s' % (my_env['COMINrestart'], workspace)
-    os.system(cmd)
-    #read after copying in
-    einputstate.readOrCreate(my_env['workspace_inputstate'])
-
+    if os.path.isfile(my_env['COMINrestartIS']): 
+      print('Copying %s into workspace' % (my_env['COMINrestartIS']))
+      cmd='cpreq %s %s' % (my_env['COMINrestartIS'], workspace)
+      os.system(cmd)
+      #read after copying in
+      einputstate.readOrCreate(my_env['workspace_inputstate'])
+    else:
+      print("Input state file wasn't created before crash, grabbing the last input state file created")
+      cmd='cpreq %s %s' % (my_env['COMINinputstate'], workspace)
+      os.system(cmd)
+      einputstate.readOrCreate(my_env['workspace_inputstate'])
+      
     # copy mdv/gefsProbOpt and mdv/gefsProbCloudTopOpt into WORKSPACE
     hh = ymdh[8:10]
     yyyymmdd = ymdh[0:8]
-    path = my_env['COMINrestart'] + '/mdv/model/gefsProbOpt'
-    if os.path.exists(path):
-      recursiveCopyMdvFcst(my_env['COMINrestart'], my_env['WORKSPACE'], 'mdv/model/gefsProbOpt', yyyymmdd, hh)
-    path = my_env['COMINrestart'] + '/mdv/model/gefsProbCloudTopOpt'
-    if os.path.exists(path):
-      recursiveCopyMdvFcst(my_env['COMINrestart'], my_env['WORKSPACE'], 'mdv/model/gefsProbCloudTopOpt', yyyymmdd, hh)
+    recursiveCopyMdvFcst(my_env['COMINrestart'], my_env['WORKSPACE'], 'mdv/model/gefsProbOpt', yyyymmdd, hh)
+    recursiveCopyMdvFcst(my_env['COMINrestart'], my_env['WORKSPACE'], 'mdv/model/gefsProbCloudTopOpt', yyyymmdd, hh)
 
     # copy all the other mdv data into $DATA
-    path = my_env['COMINrestart'] + '/mdv/model/gefs'
-    if os.path.exists(path):
-      recursiveCopyMdvEnsFcst("GEFS", my_env['COMINrestart'], my_env['DATA'] + '/EpochOps', 'mdv/model/gefs', yyyymmdd, hh)
-    else:
-      print("No data to copy in from ", path)
-      
-    path = my_env['COMINrestart'] + '/mdv/model/gefs3hr/3hrAccum'
-    if os.path.exists(path):
-      recursiveCopyMdvEnsFcst("GEFS", my_env['COMINrestart'], my_env['DATA'] + '/EpochOps', 'mdv/model/gefs3hr/3hrAccum', yyyymmdd, hh)
-    else:
-      print("No data to copy in from ", path)
-
-    path = my_env['COMINrestart'] + '/mdv/model/cmce'
-    if os.path.exists(path):
-      recursiveCopyMdvEnsFcst("CMCE", my_env['COMINrestart'], my_env['DATA'] + '/EpochOps', 'mdv/model/cmce', yyyymmdd, hh)
-    else:
-      print("No data to copy in from ", path)
-
-    path = my_env['COMINrestart'] + '/mdv/model/cmce3hr/3hrAccum'
-    if os.path.exists(path):
-      recursiveCopyMdvEnsFcst("CMCE", my_env['COMINrestart'], my_env['DATA'] + '/EpochOps', 'mdv/model/cmce3hr/3hrAccum', yyyymmdd, hh)
-    else:
-      print("No data to copy in from ", path)
+    recursiveCopyMdvEnsFcst("GEFS", my_env['COMINrestart'], my_env['DATA'] + '/EpochOps', 'mdv/model/gefs', yyyymmdd, hh)
+    recursiveCopyMdvEnsFcst("GEFS", my_env['COMINrestart'], my_env['DATA'] + '/EpochOps', 'mdv/model/gefs3hr/3hrAccum', yyyymmdd, hh)
+    recursiveCopyMdvEnsFcst("CMCE", my_env['COMINrestart'], my_env['DATA'] + '/EpochOps', 'mdv/model/cmce', yyyymmdd, hh)
+    recursiveCopyMdvEnsFcst("CMCE", my_env['COMINrestart'], my_env['DATA'] + '/EpochOps', 'mdv/model/cmce3hr/3hrAccum', yyyymmdd, hh)
 
     path = my_env['COMINrestart'] + '/mdv/model/gfs_0.25b'
     if os.path.exists(path):
@@ -1923,6 +1953,8 @@ def runEpoch(ymdh, parmfile):
 
   if eparms._do_copy_into_workspace:
     repopulateWorkspace(ymdh, estate, isPartial, comoutPath, workspace, comoutHeadLen, my_env)
+
+  #return 1 #test ending early cmd
 
   # for each 'comout' environment variable, change comout value to a workspace value, and also
   # create a new environment variable for the real thing for use later, with 'Actual' in the name

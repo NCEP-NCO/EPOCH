@@ -113,8 +113,9 @@ export COMOUTgrib2=${COMOUTgrib2:-$COMOUT/$cyc}
 export COMOUTrestart=${COMOUTrestart:-$COMOUTgrib2/restart}
 export COMOUTrestartS=${COMOUTrestartS:-$COMOUTgrib2/restart/Epoch.state}
 export COMOUTrestartIS=${COMOUTrestartIS:-$COMOUTgrib2/restart/EpochInputs.state}
-export COMINrestartIS=$(compath.py  $NET/$epoch_ver/$RUN.$PDY/$cyc/restart)
+export COMINrestartIS=$(compath.py  $NET/$epoch_ver/$RUN.$PDY/$cyc/restart/EpochInputs.state)
 export COMINrestart=$(compath.py  $NET/$epoch_ver/$RUN.$PDY/$cyc/restart)
+export COMINrestartS=$(compath.py  $NET/$epoch_ver/$RUN.$PDY/$cyc/restart/Epoch.state)
 
 export COMOUTwmo=${COMOUTwmo:-$COMOUT/wmo}
 export COMOUTmdv=${COMOUTmdv:-$COMOUT/mdv}
